@@ -10,7 +10,7 @@
         </div>
         <% for (const discipline of disciplines) { %>
             <div>
-                <input type="radio" name="discipline" value="<%= discipline %>">
+                <input type="radio" name="discipline" value="<%= discipline.discipline %>">
                 <label for="discipline"><%= discipline.discipline %></label>
             </div>
           <% } %>
@@ -20,8 +20,8 @@
     <form>
         <h2>Statistique</h2>
         <div>
-            <input type="radio" name="year" value="De 1986 à 2014">
-            <label for="year">De 1986 à 2014</label>
+            <input type="radio" name="year" value="De 1886 à 2014">
+            <label for="year">De 1886 à 2014</label>
         </div>
         <div>
             <input type="radio" name="year" value="Sur une année">
