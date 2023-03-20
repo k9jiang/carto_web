@@ -1,7 +1,7 @@
 <%- include("_header") -%>
 
 <section class="part-one">
-    <form>
+    <form id="chooseADiscipline">
         <h2>Sélectionner une discipline</h2>
         <input type="text" id="search-discipline" placeholder="Entrer une discipline">
         <div>
@@ -17,16 +17,16 @@
     </form>
 </section>
 <section class="part-two">
-    <form>
+    <form id="chooseAYear">
         <h2>Statistique</h2>
         <div>
-            <input type="radio" name="year" value="De 1986 à 2014">
+            <input type="radio" name="year" id="year" value="allYears">
             <label for="year">De 1986 à 2014</label>
         </div>
         <div>
-            <input type="radio" name="year" value="Sur une année">
+            <input type="radio" name="year" id="year" value="year">
             <label for="year">Sur une année</label>
-            <select id="chooseAYear">
+            <select id="listOfYear">
             </select>
         </div>
     </form>
