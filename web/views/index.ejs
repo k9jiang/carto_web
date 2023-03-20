@@ -1,5 +1,60 @@
 <%- include("_header") -%>
 
-<h1>Bonjour le monde...</h1>
+<section class="part-one">
+    <form>
+        <h2>Sélectionner une discipline</h2>
+        <input type="text" id="search-discipline" placeholder="Entrer une discipline">
+        <% for (const discipline of disciplines) { %>
+            <div>
+                <input type="radio" name="discipline" value="<%= discipline %>">
+                <label for="discipline"><%= discipline %></label>
+            </div>
+          <% } %>
+    </form>
+</section>
+<section class="part-two">
+    <form>
+        <h2>Statistique</h2>
+        <div>
+            <input type="radio" name="year" value="De 1986 à 2014">
+            <label for="year">De 1986 à 2014</label>
+        </div>
+        <div>
+            <input type="radio" name="year" value="Sur une année">
+            <label for="year">Sur une année</label>
+            <select id="chooseAYear">
+            </select>
+        </div>
+    </form>
+    <div class="map">
+        <h2>Médaille dans le monde <span></span></h2>
+        <div id="map-view"></div>
+    </div>
+</section>
+<section class="part-three">
+    <div class="statistics">
+        <div class="title">
+            <h2>Classement des 20 premiers pays</h2>
+            <div class="key-figure">
+                <p><span></span> athlètes possèdent</p>
+                <p id="percentage"></p>
+                <p>des médailles</p>
+            </div>
+        </div>
+        <div class="graph"></div>
+    </div>
+    <div class="statistics">
+        <div class="title">
+            <h2>Classement des 20 premiers athlètes de <span></span></h2>
+            <div class="key-figure">
+                <p><span></span> athlètes possèdent</p>
+                <p id="percentage"></p>
+                <p>des médailles</p>
+            </div>
+        </div>
+        <div class="graph"></div>
+    </div>
+</section>
+
 
 <%- include("_footer") -%>
