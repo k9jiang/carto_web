@@ -32,13 +32,22 @@ app.listen(3000, () => {
     console.log("Serveur démarré (http://localhost:3000/) !");
 });
 
+let disciplines;
 app.get("/", (req, res) => {
     const query = "SELECT DISTINCT discipline FROM event";
+    const query_years = "SELECT DISTINCT year from olympiad";
     pool.query(query, [], (err, result) => {
         if (err) {
           return console.error(err.message);
         }
         console.log(result.rows);
-        res.render("index", { disciplines: result.rows});
+        disciplines = result
       });
+    pool.query(query_years, [], (err, years) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log(years.rows);
+      res.render("index", {disciplines: disciplines.rows, years : years.rows})
+    })
 })
