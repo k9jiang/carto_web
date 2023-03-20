@@ -6,12 +6,14 @@ const { Pool } = require("pg") //Se connecter à la base de données
 
 const app = express();
 
+const dotenv = require('dotenv').config();
+
 const pool = new Pool({ //Identifiants de connexion, ne jamais l'afficher en dur
-    user: "postgres",
-    host: "localhost",
-    database: "olympics",
-    password: "admin",
-    port: 5432
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE_NAME,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT
 })// mes identifiants à moi, changer dans votre version si vous voulez tester
 
 console.log("Connexion réussie à la base de donnée")
