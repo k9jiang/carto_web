@@ -6,13 +6,13 @@ const { Pool } = require("pg") //Se connecter à la base de données
 
 const app = express();
 
-const pool = new Pool({ //Identifiants de connexion, ne jamais l'afficher en dure
+const pool = new Pool({ //Identifiants de connexion, ne jamais l'afficher en dur
     user: "postgres",
     host: "localhost",
-    database: "Cartha",
-    password: "postgres",
+    database: "olympics",
+    password: "admin",
     port: 5432
-})
+})// mes identifiants à moi, changer dans votre version si vous voulez tester
 
 console.log("Connexion réussie à la base de donnée")
 
@@ -30,7 +30,13 @@ app.listen(3000, () => {
     console.log("Serveur démarré (http://localhost:3000/) !");
 });
 
-
 app.get("/", (req, res) => {
-    res.render("index", { disciplines: ["Softball", "Badminton", "Trampoline"]});
+    const query = "SELECT DISTINCT discipline FROM event";
+    pool.query(query, [], (err, result) => {
+        if (err) {
+          return console.error(err.message);
+        }
+        console.log(result.rows);
+        res.render("index", { disciplines: result.rows});
+      });
 })
