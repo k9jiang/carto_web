@@ -52,4 +52,4 @@ WHERE event.discipline = 'Swimming' AND olympiad.year = '2012'
 GROUP BY event.discipline, country.name, olympiad.year
 ORDER BY medalcount desc;
 
---SELECT * from event join medal on medal.event_id = event.id where event.name = '4X200M Freestyle';
+SELECT * from event join medal on medal.event_id = event.id where event.name = '4X200M Freestyle';
