@@ -52,4 +52,35 @@ WHERE event.discipline = 'Swimming' AND olympiad.year = '2012'
 GROUP BY event.discipline, country.name, olympiad.year
 ORDER BY medalcount desc;
 
---SELECT * from event join medal on medal.event_id = event.id where event.name = '4X200M Freestyle';
+--Checks for individual medals in team events
+SELECT * from event join medal on medal.event_id = event.id where event.name = '4X200M Freestyle';
+
+--Changing duplicates disciplines with different names
+SELECT distinct discipline from event;
+
+SELECT * from event where discipline in ('Wrestling Freestyle', 'Wrestling Free.');
+UPDATE event SET discipline = 'Wrestling Freestyle' WHERE discipline = 'Wrestling Free.';
+
+SELECT * from event where discipline ilike ('Water polo');
+UPDATE event set discipline = 'Water Polo' where discipline ilike ('Water polo');
+
+SELECT * from event where discipline in ('Artistic G.','Gymnastics Artistic');
+UPDATE event set discipline = 'Gymnastics Artistic' where discipline = 'Artistic G.';
+
+SELECT * from event where discipline in ('Rhythmic G.','Gymnastics Rhythmic');
+UPDATE event set discipline = 'Gymnastics Rhythmic' WHERE discipline = 'Rhythmic G.';
+
+SELECT * from event where discipline in ('Synchronized Swimming','Synchronized S.');
+UPDATE event set discipline = 'Synchronized Swimming' where discipline = 'Synchronized S.';
+
+SELECT * from event where discipline in ('Canoe Sprint','Canoe / Kayak F');
+UPDATE event set discipline = 'Canoe Sprint' where discipline = 'Canoe / Kayak F';
+
+SELECT * from event where discipline in ('Canoe Slalom', 'Canoe / Kayak S');
+UPDATE event set discipline = 'Canoe Slalom' where discipline = 'Canoe / Kayak S';
+
+SELECT * from event where discipline in ('Modern Pentathlon','Modern Pentath.');
+UPDATE event set discipline = 'Modern Pentathlon' where discipline = 'Modern Pentath.';
+
+
+
