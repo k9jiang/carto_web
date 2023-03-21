@@ -34,7 +34,7 @@ app.listen(3000, () => {
 
 app.get("/", (req, res) => {
     const query_discipline = "SELECT DISTINCT discipline FROM event";
-    const query_year = "SELECT DISTINCT year from olympiad";
+    const query_year = "SELECT DISTINCT year from olympiad ORDER BY year ASC";
     pool.query(query_discipline, [], (err, result) => {
       let years;
       if (err) {
