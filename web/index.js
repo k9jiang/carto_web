@@ -57,3 +57,8 @@ app.get("/", (req, res) => {
 app.post("/data", (req, res) => {
   console.log(req.body);
 })
+
+app.get("/athletes/:country", (req, res) => {
+  console.log(req.params.country);
+  res.json(req.params.country);
+})
