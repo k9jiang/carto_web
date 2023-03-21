@@ -8,6 +8,7 @@ let reqDiscipline = "disciplines";
 let reqYear = "allYears";
 
 let group;
+let circles_group = L.layerGroup();
 
 let filter;
 let map = L.map('map-view').setView([0, 0], 3);
@@ -28,13 +29,43 @@ function updateTitle(){
     }
 }
 
+function getRadius(value) {
+    let v_min = 1
+    let r_min = 25000
+    return r_min * Math.sqrt(value / v_min)
+}
+
+function updateMedals(json_query, if_clear){
+    fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
+    .then(result => result.json())
+    .then(function(centroids) {
+        console.log(centroids.features[0].geometry.coordinates);
+        if (if_clear) {
+            circles_group.clearLayers() // seems not to work atm
+        }
+        for (centroid of centroids.features) {
+            let lnglat = centroid.geometry.coordinates;
+            let latlng = [lnglat[1], lnglat[0]];
+            let medals;
+            for (country of json_query) {
+                if (country.name == centroid.properties.name) {
+                    medals = country.medalcount
+                    console.log(medals, country.name, centroid.properties.name);
+                    circles_group.addLayer(L.circle(latlng, getRadius(medals)).addTo(map));
+                }
+            }
+        }
+        console.log(circles_group);
+    })
+}
+
 function updateGeom(replace = false){
     if(reqYear == 'allYears'){
         filter = "";
     }else{
         filter = `&CQL_FILTER=first_participation<=${reqYear}%20AND%20last_participation>=${reqYear}`;
     }
-    const url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Carthageo%3Acountry&outputFormat=application%2Fjson"
+    const url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
               + filter;
     //Affichage des pays
     fetch(url)
@@ -50,7 +81,7 @@ function updateGeom(replace = false){
         });
 }
 
-function updateData(){
+function updateData(clear = false){
     //Cercles proportionnelles
     fetch("http://localhost:3000/data",{
         method : "POST",
@@ -63,6 +94,7 @@ function updateData(){
         .then(result => result.json())
         .then(result => {
             console.log(result);
+            updateMedals(result, clear);
         })
 }
 
@@ -74,14 +106,14 @@ firstYear.setAttribute("selected", true)
 //Mise à jour de la carte
 updateTitle();
 updateGeom();
-updateData();
+//updateData();
 
 //Interaction avec les disciplines
 $("#chooseADiscipline").change(function(){
     reqDiscipline = this.discipline.value;
 
     updateTitle();
-    updateData();
+    updateData(true);
 })
 
 //Interaction avec les années
@@ -98,7 +130,7 @@ $("#chooseAYear").change(function(){
 
     updateTitle();
     updateGeom(true);
-    updateData();
+    updateData(true);
 })
 
 //Affichage du fond de carte carte
@@ -109,5 +141,3 @@ L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/
     ext: 'png',
     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
-
-
