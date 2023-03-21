@@ -6,15 +6,22 @@ const firstYear = document.querySelector("option[value='2014']");
 
 let reqDiscipline = "disciplines";
 let reqYear = "allYears";
+let reqCountry;
 
 let group;
 
 let filter;
 let map = L.map('map-view').setView([0, 0], 3);
 
+//Graphiques
+let graphCountries = document.querySelector('.statistics-country .graph');
+let graphAthlete = document.querySelector('.statistics-athlete .graph');
+
+let spanTitleGraph = document.querySelector('.statistics-athlete h2 span');
+
 
 //Fonctions
-function updateTitle(){
+function updateTitleMap(){
     if(reqYear == "allYears"){
         spanTitleMap.textContent = "de 1886 à 2014"
     }else{
@@ -26,6 +33,12 @@ function updateTitle(){
     }else{
         spanTitleMap.textContent += ` en ${reqDiscipline}`
     }
+}
+
+function updateCountry(countryName){
+    reqCountry = countryName;
+    spanTitleGraph.textContent = reqCountry;
+    updateGraphAthletes(reqCountry);
 }
 
 function updateGeom(replace = false){
@@ -43,15 +56,52 @@ function updateGeom(replace = false){
             if(replace){
                 group.clearLayers();
             }
-            group = L.geoJSON(result).addTo(map);
+            group = L.geoJSON(result).bindPopup(function (layer) {
+                updateCountry(layer.feature.properties.name);
+                return reqCountry;
+            }).addTo(map);
         })
         .catch(function(error) {
             console.error(error);
         });
 }
 
+//Affichage des graphiques
+function updateGraphCountries(result){
+    new Chart(graphCountries, {
+        type: 'bar',
+        data: {
+            labels: result.name,
+            datasets: [{
+                label: 'Nombre de médaille remporté',
+                data: result.medalcount,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            onClick: (e) => {
+                console.log(this);
+                updateCountry(this); //insertion du nom du pays
+            }
+        }
+    });
+}
+
+function updateGraphAthletes(country){
+    fetch("http://localhost:3000/athletes/"+country)
+        .then(rep => rep.json())
+        .then(res => {
+            console.log(res)
+        })
+}
+
+
 function updateData(){
-    //Cercles proportionnelles
     fetch("http://localhost:3000/data",{
         method : "POST",
         headers: {
@@ -62,7 +112,9 @@ function updateData(){
     })
         .then(result => result.json())
         .then(result => {
-            console.log(result);
+
+            //Mise à jour de la visualistion
+            //updateGraphCountries(result);
         })
 }
 
@@ -72,7 +124,7 @@ firstDiscipline.setAttribute("checked", true)
 firstYear.setAttribute("selected", true)
 
 //Mise à jour de la carte
-updateTitle();
+updateTitleMap();
 updateGeom();
 updateData();
 
@@ -80,7 +132,7 @@ updateData();
 $("#chooseADiscipline").change(function(){
     reqDiscipline = this.discipline.value;
 
-    updateTitle();
+    updateTitleMap();
     updateData();
 })
 
@@ -96,7 +148,7 @@ $("#chooseAYear").change(function(){
         reqYear = this.year.value;
     }
 
-    updateTitle();
+    updateTitleMap();
     updateGeom(true);
     updateData();
 })
@@ -110,4 +162,4 @@ L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/
     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-
+//Intéraction avec la carte
