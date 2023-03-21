@@ -19,9 +19,11 @@ const pool = new Pool({ //Identifiants de connexion, ne jamais l'afficher en dur
 console.log("Connexion réussie à la base de donnée")
 
 //Où trouver les fichiers statiques si le chemin n'existe pas
+
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true })); //Autoriser les req.body
+app.use(express.json());
 
 //Système de vues à préciser. Set pour configurer
 app.set("view engine", "ejs");
@@ -50,4 +52,8 @@ app.get("/", (req, res) => {
         console.log(years);
         res.render("index", {disciplines: disciplines, years : years})})
     })
+})
+
+app.post("/data", (req, res) => {
+  console.log(req.body);
 })
