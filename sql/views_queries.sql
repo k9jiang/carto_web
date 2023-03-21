@@ -82,5 +82,71 @@ UPDATE event set discipline = 'Canoe Slalom' where discipline = 'Canoe / Kayak S
 SELECT * from event where discipline in ('Modern Pentathlon','Modern Pentath.');
 UPDATE event set discipline = 'Modern Pentathlon' where discipline = 'Modern Pentath.';
 
+--Multipart to singlepart "countries" table to get proper centroids
+CREATE table singlepart_countries as
+SELECT id, name, code, pop, first_participation, last_participation, (ST_Dump(geometry)).geom from country;
 
+alter table singlepart_countries add column surf float;
+update singlepart_countries set surf = ST_AREA(geom);
 
+--Creating a table with all the biggest parts of all the countries except Denmark and Indonesia.
+drop table if exists biggest_singlepart;
+create table biggest_singlepart as
+with foo as (
+select id, name, max(surf) as surf
+from singlepart_countries
+group by id, name)
+select foo.id as id,
+       foo.name as name,
+       s_c.first_participation as first_participation,
+       s_c.last_participation as last_participation,
+       s_c.geom as geom,
+       s_c.surf as surf ,
+       s_c.pop as pop
+from foo, singlepart_countries as s_c
+where foo.surf = s_c.surf and foo.name not in ('Denmark', 'Indonesia');
+
+--Adding Indonesia in our "biggest_singlepart" table with all its parts
+insert into biggest_singlepart (id, name, first_participation, last_participation, geom, pop)
+values ((SELECT id from country where name = 'Indonesia'),
+(SELECT name from country where name = 'Indonesia'),
+(SELECT first_participation from country where name = 'Indonesia'),
+(SELECT last_participation from country where name = 'Indonesia'),
+(SELECT geometry from country where name = 'Indonesia'),
+(SELECT pop from country where name = 'Indonesia'));
+
+--deleting Groenland from "singlepart_countries"
+with biggest_part as (
+select id, name, max(surf) as surf
+from singlepart_countries
+group by id, name),
+groenland as(
+select biggest_part.id as id,
+       biggest_part.name as name,
+       s_c.first_participation as first_participation,
+       s_c.last_participation as last_participation,
+       s_c.geom as geom,
+       s_c.surf as surf ,
+       s_c.pop as pop
+from biggest_part, singlepart_countries as s_c
+where biggest_part.surf = s_c.surf and biggest_part.name = 'Denmark')
+delete from singlepart_countries where (select groenland.geom from groenland) = singlepart_countries.geom;
+
+--Adding Denmark to "biggest_singlepart"
+with foo as (
+select id, name, max(surf) as surf
+from singlepart_countries
+group by id, name)
+INSERT INTO biggest_singlepart (id, name, first_participation, last_participation, geom, surf, pop)
+       VALUES ((SELECT foo.id FROM foo, singlepart_countries as s_c where foo.surf = s_c.surf and foo.name = 'Denmark'),
+               (SELECT foo.name FROM foo, singlepart_countries as s_c where foo.surf = s_c.surf and foo.name = 'Denmark'),
+               (SELECT s_c.first_participation FROM foo, singlepart_countries as s_c where foo.surf = s_c.surf and foo.name = 'Denmark'),
+               (SELECT s_c.last_participation FROM foo, singlepart_countries as s_c where foo.surf = s_c.surf and foo.name = 'Denmark'),
+               (SELECT s_c.geom FROM foo, singlepart_countries as s_c where foo.surf = s_c.surf and foo.name = 'Denmark'),
+               (SELECT s_c.surf FROM foo, singlepart_countries as s_c where foo.surf = s_c.surf and foo.name = 'Denmark'),
+               (SELECT s_c.pop FROM foo, singlepart_countries as s_c where foo.surf = s_c.surf and foo.name = 'Denmark'));
+
+alter table biggest_singlepart add column centroid geometry;
+update biggest_singlepart set centroid = st_centroid(geom);
+--Creating a table with only centroids
+CREATE TABLE centroids AS (SELECT id, name, first_participation, last_participation, centroid as geom, pop FROM biggest_singlepart);
