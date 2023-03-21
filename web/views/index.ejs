@@ -20,13 +20,17 @@
     <form id="chooseAYear">
         <h2>Statistique</h2>
         <div>
-            <input type="radio" id="year" name="year" value="allYears">
+            <input type="radio" id="year" name="year" value="allYears" checked>
             <label for="year">De 1886 à 2014</label>
         </div>
         <div>
             <input type="radio" name="year" id="year" value="year">
             <label for="year">Sur une année</label>
-            <select id="listOfYear">
+            <select id="listOfYear" name="listOfYear" disabled>
+                <option value=''>Choisisser une année</option>
+                <% for (const year of years) { %>
+                    <option value="<%= year.year %>"><%= year.year %></option>
+                <% } %>
             </select>
         </div>
     </form>
