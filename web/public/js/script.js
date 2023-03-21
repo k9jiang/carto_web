@@ -4,6 +4,9 @@ const spanTitleMap = document.querySelector(".map h2 span");
 const firstDiscipline = document.querySelector("input[name='discipline']");
 const firstYear = document.querySelector("option[value='2014']");
 
+let reqDiscipline = "disciplines";
+let reqYear = "allYears";
+
 //Fonctions
 
 function updateTitle(){
@@ -23,8 +26,6 @@ function updateTitle(){
 
 
 //Valeurs sélectionnées de départ
-let reqDiscipline = "disciplines";
-let reqYear = "allYears";
 
 firstDiscipline.setAttribute("checked", true)
 firstYear.setAttribute("selected", true)
@@ -37,7 +38,6 @@ updateTitle();
 //Interaction avec les disciplines
 $("#chooseADiscipline").change(function(){
     reqDiscipline = this.discipline.value;
-    console.log(reqYear + " " + reqDiscipline)
 
     updateTitle();
 })
@@ -53,7 +53,6 @@ $("#chooseAYear").change(function(){
     }else{
         reqYear = this.year.value;
     }
-    console.log(reqYear + " " + reqDiscipline)
 
     updateTitle();
 })
