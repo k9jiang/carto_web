@@ -12,6 +12,14 @@ h1{
     font-weight: lighter;
 }
 
+a{
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
 /*header*/
 
 header div{
@@ -28,13 +36,29 @@ header nav{
     color: #FFF;
 }
 
+header nav a{
+    color: #FFF;
+}
+
 header nav ul{
     display: flex;
+    margin: 0px;
+    padding: 8px 40px;
+    height: 35px;
 }
 
 header nav ul li{
     list-style-type: none;
+    display: flex;
+    align-items: center;
 }
+
+header nav ul div{
+    border-left: 1px solid #FFF;
+    margin: 0px 20px;
+}
+
+
 
 #map-view{
     height: 400px;
