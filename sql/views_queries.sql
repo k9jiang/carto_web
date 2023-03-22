@@ -150,3 +150,22 @@ alter table biggest_singlepart add column centroid geometry;
 update biggest_singlepart set centroid = st_centroid(geom);
 --Creating a table with only centroids
 CREATE TABLE centroids AS (SELECT id, name, first_participation, last_participation, centroid as geom, pop FROM biggest_singlepart);
+
+-- tests
+SELECT country.name, count(medal.medal) AS medalcount
+FROM athlete
+JOIN medal ON athlete.id = medal.athlete_id
+JOIN event ON medal.event_id = event.id
+JOIN country ON athlete.country_id = country.id
+GROUP BY country.name
+ORDER BY medalcount desc;
+
+SELECT country.name, count(medal.medal) AS medalcount, olympiad.year
+FROM athlete
+JOIN medal ON athlete.id = medal.athlete_id
+JOIN event ON medal.event_id = event.id
+JOIN country ON athlete.country_id = country.id
+JOIN olympiad on medal.olympiad_id = olympiad.id
+WHERE olympiad.year = 2008
+GROUP BY country.name, olympiad.year
+ORDER BY medalcount desc;

@@ -43,19 +43,46 @@ app.get("/", (req, res) => {
         return console.error(err.message);
       }
       disciplines = result.rows;
-      console.log(result.rows);
+      //console.log(result.rows);
       pool.query(query_year, [], (err, result2) => {
         if (err) {
           return console.error(err.message);
         }
         years = result2.rows;
-        console.log(years);
+        //console.log(years);
         res.render("index", {disciplines: disciplines, years : years})})
     })
 })
 
 app.post("/data", (req, res) => {
   console.log(req.body);
+  let query_parameters;
+
+  let query_medals;
+  if (req.body.discipline == 'disciplines' && req.body.year == 'allYears') {
+    query_medals = "SELECT country.name, count(medal.medal) AS medalcount FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id GROUP BY country.name ORDER BY medalcount desc";
+  }
+  else if (req.body.discipline == 'disciplines' && req.body.year != 'allYears') {
+    query_parameters = [req.body.year]
+    query_medals = "SELECT country.name, count(medal.medal) AS medalcount, olympiad.year FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id JOIN olympiad ON medal.olympiad_id = olympiad.id  WHERE olympiad.year = $1 GROUP BY country.name, olympiad.year ORDER BY medalcount desc";
+  }
+  else if (req.body.discipline != 'disciplines' && req.body.year == 'allYears') {
+    query_parameters = [req.body.discipline]
+    query_medals = "SELECT country.name, count(medal.medal) AS medalcount, event.discipline FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id WHERE event.discipline = $1 GROUP BY country.name, event.discipline ORDER BY medalcount desc";
+  }
+  else {
+    query_parameters = [req.body.discipline, req.body.year]
+    query_medals = "SELECT country.name, count(medal.medal) AS medalcount, olympiad.year, event.discipline FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id JOIN olympiad ON medal.olympiad_id = olympiad.id  WHERE event.discipline = $1 AND olympiad.year = $2 GROUP BY country.name, olympiad.year, event.discipline ORDER BY medalcount desc";
+  }
+  console.log(query_medals);
+  pool.query(query_medals, query_parameters, (err, result) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    medals_by_country = result.rows;
+    console.log(medals_by_country);
+    res.json(medals_by_country);
+  })
 })
 
 app.get("/athletes/:country", (req, res) => {
