@@ -8,7 +8,7 @@ let reqDiscipline = "disciplines";
 let reqYear = "allYears";
 
 let group;
-let circles_group = L.layerGroup();
+let circles_group = L.featureGroup(); //initializing circles group
 
 let filter;
 let map = L.map('map-view').setView([0, 0], 3);
@@ -31,18 +31,16 @@ function updateTitle(){
 
 function getRadius(value) {
     let v_min = 1
-    let r_min = 25000
+    let r_min = 5
     return r_min * Math.sqrt(value / v_min)
 }
 
-function updateMedals(json_query, if_clear){
+function updateMedals(json_query){
     fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
     .then(result => result.json())
     .then(function(centroids) {
         console.log(centroids.features[0].geometry.coordinates);
-        if (if_clear) {
-            circles_group.clearLayers() // seems not to work atm
-        }
+        circles_group.clearLayers() //clears circles features at the beginning of each change
         for (centroid of centroids.features) {
             let lnglat = centroid.geometry.coordinates;
             let latlng = [lnglat[1], lnglat[0]];
@@ -51,11 +49,12 @@ function updateMedals(json_query, if_clear){
                 if (country.name == centroid.properties.name) {
                     medals = country.medalcount
                     console.log(medals, country.name, centroid.properties.name);
-                    circles_group.addLayer(L.circle(latlng, getRadius(medals)).addTo(map));
+                    L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1}).addTo(circles_group); //adding each circle of each country to the group
                 }
             }
         }
         console.log(circles_group);
+        circles_group.addTo(map); //displaying features group in the map
     })
 }
 
