@@ -6,6 +6,10 @@ const firstYear = document.querySelector("option[value='2014']");
 
 let reqDiscipline = "disciplines";
 let reqYear = "allYears";
+<<<<<<< Updated upstream
+=======
+let reqCountry = "allCountries";
+>>>>>>> Stashed changes
 
 let group;
 let circles_group = L.featureGroup(); //initializing circles group
@@ -29,9 +33,16 @@ function updateTitle(){
     }
 }
 
-function getRadius(value) {
-    let v_min = 1
-    let r_min = 5
+function getRadius(value) { //returns real proportionnal circles according to the represented value
+    let v_min = 1;
+    let r_min;
+    if ((reqDiscipline != 'discipline' && reqYear !='allYears')) {
+        r_min = 5
+    }
+    else {
+        r_min = 0.75 //setting a tinier min radius if we get all of both disciplines and editions of olympics.
+    }
+    console.log(r_min)
     return r_min * Math.sqrt(value / v_min)
 }
 
@@ -39,7 +50,7 @@ function updateMedals(json_query){
     fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
     .then(result => result.json())
     .then(function(centroids) {
-        console.log(centroids.features[0].geometry.coordinates);
+        //console.log(centroids.features[0].geometry.coordinates);
         circles_group.clearLayers() //clears circles features at the beginning of each change
         for (centroid of centroids.features) {
             let lnglat = centroid.geometry.coordinates;
@@ -48,14 +59,25 @@ function updateMedals(json_query){
             for (country of json_query) {
                 if (country.name == centroid.properties.name) {
                     medals = country.medalcount
-                    console.log(medals, country.name, centroid.properties.name);
+                    //console.log(medals, country.name, centroid.properties.name);
                     L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1}).addTo(circles_group); //adding each circle of each country to the group
                 }
             }
         }
+<<<<<<< Updated upstream
         console.log(circles_group);
         circles_group.addTo(map); //displaying features group in the map
     })
+=======
+        //console.log(circles_group);
+        circles_group.addTo(map).bringToFront(); //displaying features group in the map
+    })}
+
+function updateCountry(countryName){
+    reqCountry = countryName;
+    spanTitleGraph.textContent = reqCountry;
+    updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
+>>>>>>> Stashed changes
 }
 
 function updateGeom(replace = false){
@@ -73,15 +95,63 @@ function updateGeom(replace = false){
             if(replace){
                 group.clearLayers();
             }
+<<<<<<< Updated upstream
             group = L.geoJSON(result).addTo(map);
+=======
+            group = L.geoJSON(result).bindPopup(function (layer) {
+                updateCountry(layer.feature.properties.name);
+                return reqCountry;
+            }).addTo(map);
+            updateData();
+>>>>>>> Stashed changes
         })
         .catch(function(error) {
             console.error(error);
         });
 }
 
+<<<<<<< Updated upstream
 function updateData(clear = false){
     //Cercles proportionnelles
+=======
+
+//Affichage des graphiques
+function updateGraphCountries(result){
+    new Chart(graphCountries, {
+        type: 'bar',
+        data: {
+            labels: result.name,
+            datasets: [{
+                label: 'Nombre de médaille remporté',
+                data: result.medalcount,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            onClick: (e) => {
+                console.log(this);
+                updateCountry(this); //insertion du nom du pays
+            }
+        }
+    });
+}
+
+function updateGraphAthletes(country,discipline, year){
+    fetch(`http://localhost:3000/athletes/?country=${country}&discipline=${discipline}&year=${year}`)
+        .then(rep => rep.json())
+        .then(res => {
+            console.log(res)
+        })
+}
+
+
+function updateData(){
+>>>>>>> Stashed changes
     fetch("http://localhost:3000/data",{
         method : "POST",
         headers: {
@@ -110,9 +180,15 @@ updateGeom();
 //Interaction avec les disciplines
 $("#chooseADiscipline").change(function(){
     reqDiscipline = this.discipline.value;
+<<<<<<< Updated upstream
 
     updateTitle();
     updateData(true);
+=======
+    updateTitleMap();
+    updateData();
+    updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
+>>>>>>> Stashed changes
 })
 
 //Interaction avec les années
@@ -129,7 +205,7 @@ $("#chooseAYear").change(function(){
 
     updateTitle();
     updateGeom(true);
-    updateData(true);
+    updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
 })
 
 //Affichage du fond de carte carte

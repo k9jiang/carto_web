@@ -151,7 +151,7 @@ update biggest_singlepart set centroid = st_centroid(geom);
 --Creating a table with only centroids
 CREATE TABLE centroids AS (SELECT id, name, first_participation, last_participation, centroid as geom, pop FROM biggest_singlepart);
 
--- tests
+-- testing queries
 SELECT country.name, count(medal.medal) AS medalcount
 FROM athlete
 JOIN medal ON athlete.id = medal.athlete_id
@@ -169,3 +169,30 @@ JOIN olympiad on medal.olympiad_id = olympiad.id
 WHERE olympiad.year = 2008
 GROUP BY country.name, olympiad.year
 ORDER BY medalcount desc;
+
+SELECT athlete.name, country.name as nationality, count(medal.medal) AS medalcount, event.discipline FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id WHERE event.discipline = 'Swimming' AND country.name = 'France' GROUP BY event.discipline, athlete.name, nationality ORDER BY medalcount desc limit 20;
+
+SELECT athlete.name,
+       count(medal.medal) AS medalcount
+FROM athlete
+JOIN medal ON athlete.id = medal.athlete_id
+GROUP BY athlete.name
+ORDER BY medalcount desc limit 20;
+
+SELECT athlete.name,
+       country.name as nationality,
+       count(medal.medal) AS medalcount
+FROM athlete
+JOIN medal ON athlete.id = medal.athlete_id
+JOIN event ON medal.event_id = event.id
+JOIN country ON athlete.country_id = country.id
+WHERE country.name = 'France'
+GROUP BY athlete.name, nationality
+ORDER BY medalcount desc limit 20;
+
+
+SELECT athlete.name,
+       count(medal.medal) AS medalcount
+FROM athlete JOIN medal ON athlete.id = medal.athlete_id
+GROUP by athlete.name
+ORDER BY medalcount DESC LIMIT 20;
