@@ -1,3 +1,41 @@
+body{
+    margin: auto;
+}
+
+/*Textes*/
+
+*{
+    font-family: "Roboto", "Raleway", Arial, sans-serif;
+}
+
+h1{
+    font-weight: lighter;
+}
+
+/*header*/
+
+header div{
+    display: flex;
+    justify-content: space-between;
+}
+
+header img{
+    width: 125px;
+}
+
+header nav{
+    background-color: #000;
+    color: #FFF;
+}
+
+header nav ul{
+    display: flex;
+}
+
+header nav ul li{
+    list-style-type: none;
+}
+
 #map-view{
     height: 400px;
     width: 1000px;
