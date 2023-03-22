@@ -6,15 +6,17 @@
         <input type="text" id="search-discipline" placeholder="Entrer une discipline">
         <div>
             <input type="radio" name="discipline" value="disciplines">
-            <label for="disciplines">Toutes les disciplines</label>
+             <label for="disciplines">Toutes les disciplines</label>
         </div>
-        <fieldset>
-        </fieldset>
+        <div id="scroll">
+            <fieldset>
+            </fieldset>
+        </div>
     </form>
 </section>
 <section class="part-two">
     <form id="chooseAYear">
-        <h2>Statistique</h2>
+        <h2>Statistiques</h2>
         <div>
             <input type="radio" id="year" name="year" value="allYears" checked>
             <label for="year">De 1886 à 2014</label>
@@ -23,7 +25,7 @@
             <input type="radio" name="year" id="year" value="year">
             <label for="year">Sur une année</label>
             <select id="listOfYear" name="listOfYear" disabled>
-                <option value=''>Choisisser une année</option>
+                <option value=''>Choisissez une année</option>
                 <% for (const year of years) { %>
                     <option value="<%= year.year %>"><%= year.year %></option>
                 <% } %>
