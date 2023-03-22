@@ -1,4 +1,84 @@
+body{
+    margin: auto;
+}
+
+/*Textes*/
+
+*{
+    font-family: "Roboto", "Raleway", Arial, sans-serif;
+}
+
+h1{
+    font-weight: lighter;
+}
+
+a{
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+/*header*/
+
+header div{
+    display: flex;
+    justify-content: space-between;
+}
+
+header img{
+    width: 125px;
+}
+
+header nav{
+    background-color: #000;
+    color: #FFF;
+}
+
+header nav a{
+    color: #FFF;
+}
+
+header nav ul{
+    display: flex;
+    margin: 0px;
+    padding: 8px 40px;
+    height: 35px;
+}
+
+header nav ul li{
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+}
+
+header nav ul div{
+    border-left: 1px solid #FFF;
+    margin: 0px 20px;
+}
+
+#scroll{
+    background-color: white;
+    width: 240px;
+    height: 400px;
+    border: 1px solid black;
+    overflow: scroll;
+}
+
 #map-view{
     height: 400px;
     width: 1000px;
+}
+
+#scroll input[type="radio"]{
+    appearance: none;
+}
+
+#scroll input[type="radio"]:checked{
+    background-color: aqua;
+}
+
+#scroll label{
+    cursor: pointer;
 }
