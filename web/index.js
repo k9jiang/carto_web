@@ -34,24 +34,25 @@ app.listen(3000, () => {
     console.log("Serveur démarré (http://localhost:3000/) !");
 });
 
+app.get("/disciplines", (req, res) => {
+  const query_discipline = "SELECT DISTINCT discipline from event";
+  pool.query(query_discipline, [], (err, result) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(result.rows);
+    res.json(result.rows);
+  })
+})
+
 app.get("/", (req, res) => {
-    const query_discipline = "SELECT DISTINCT discipline FROM event";
-    const query_year = "SELECT DISTINCT year from olympiad ORDER BY year ASC";
-    pool.query(query_discipline, [], (err, result) => {
-      let years;
-      if (err) {
-        return console.error(err.message);
-      }
-      disciplines = result.rows;
-      //console.log(result.rows);
-      pool.query(query_year, [], (err, result2) => {
-        if (err) {
-          return console.error(err.message);
-        }
-        years = result2.rows;
-        //console.log(years);
-        res.render("index", {disciplines: disciplines, years : years})})
-    })
+  const query_year = "SELECT DISTINCT year from olympiad ORDER BY year ASC";
+  pool.query(query_year, [], (err, result2) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    res.render("index", {years : result2.rows});
+  })
 })
 
 app.post("/data", (req, res) => {

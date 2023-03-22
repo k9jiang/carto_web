@@ -4,15 +4,13 @@
     <form id="chooseADiscipline">
         <h2>Sélectionner une discipline</h2>
         <input type="text" id="search-discipline" placeholder="Entrer une discipline">
+        <div>
+            <input type="radio" name="discipline" value="disciplines">
+             <label for="disciplines">Toutes les disciplines</label>
+        </div>
         <div id="scroll">
-            <div>
-                <label for="disciplines">Toutes les disciplines</label>
-            </div>
-            <% for (const discipline of disciplines) { %>
-                <div>
-                    <label><input type="radio" name="discipline" value="<%= discipline.discipline %>"><%= discipline.discipline %></label>
-                </div>
-              <% } %>
+            <fieldset>
+            </fieldset>
         </div>
     </form>
 </section>
@@ -49,7 +47,7 @@
                 <p>des médailles</p>
             </div>
         </div>
-        <div class="graph"></div>
+        <canvas class="graph"></div>
     </div>
     <div class="statistics-athlete">
         <div class="title">
@@ -60,7 +58,7 @@
                 <p>des médailles</p>
             </div>
         </div>
-        <div class="graph"></div>
+        <canvas class="graph"></div>
     </div>
 </section>
 
