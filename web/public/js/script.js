@@ -1,8 +1,13 @@
 const selectYear = document.getElementById("listOfYear");
 const spanTitleMap = document.querySelector(".map h2 span");
 
+const inputEnterDiscipline = document.getElementById("search-discipline");
+const formDiscipline = document.querySelector("#chooseADiscipline fieldset");
+
 const firstDiscipline = document.querySelector("input[name='discipline']");
 const firstYear = document.querySelector("option[value='2014']");
+
+let disciplines = [];
 
 let reqDiscipline = "disciplines";
 let reqYear = "allYears";
@@ -43,7 +48,7 @@ function getRadius(value) {
 }
 
 function updateMedals(json_query){
-    fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
+    fetch('http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
     .then(result => result.json())
     .then(function(centroids) {
         console.log(centroids.features[0].geometry.coordinates);
@@ -77,7 +82,7 @@ function updateGeom(replace = false){
     }else{
         filter = `&CQL_FILTER=first_participation<=${reqYear}%20AND%20last_participation>=${reqYear}`;
     }
-    const url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
+    const url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
               + filter;
     //Affichage des pays
     fetch(url)
@@ -150,6 +155,32 @@ function updateData(){
         })
 }
 
+function displayDisciplines(text = ""){
+
+    formDiscipline.innerHTML = "";
+
+    if(text === "" ){
+        for(let discipline of disciplines){
+            let inputDiscipline = `<div>
+            <input type="radio" name="discipline" value="${discipline}">
+            <label for="discipline">${discipline}</label>
+            </div>`;
+            
+            formDiscipline.innerHTML += inputDiscipline;
+        }
+    }else{
+        for(let discipline of disciplines){
+            if(discipline.toLowerCase().includes(text.toLowerCase())){
+                let inputDiscipline = `<div>
+                <input type="radio" name="discipline" value="${discipline}">
+                <label for="discipline">${discipline}</label>
+            </div>`;
+            
+            formDiscipline.innerHTML += inputDiscipline;
+            }       
+        }
+    }
+}
 
 //Valeurs sélectionnées de départ
 firstDiscipline.setAttribute("checked", true)
@@ -160,7 +191,22 @@ updateTitleMap();
 updateGeom();
 //updateData();
 
+
 //Interaction avec les disciplines
+fetch("http://localhost:3000/disciplines")
+    .then(rep => rep.json())
+    .then(res => {
+        for(let discipline of res){
+            disciplines.push(discipline.discipline);
+        }
+        displayDisciplines();
+    })
+
+$("#search-discipline").keyup(function(){
+    console.log(this.value);
+    displayDisciplines(this.value);
+})
+
 $("#chooseADiscipline").change(function(){
     reqDiscipline = this.discipline.value;
     updateTitleMap();
