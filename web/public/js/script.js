@@ -6,10 +6,7 @@ const firstYear = document.querySelector("option[value='2014']");
 
 let reqDiscipline = "disciplines";
 let reqYear = "allYears";
-<<<<<<< Updated upstream
-=======
 let reqCountry = "allCountries";
->>>>>>> Stashed changes
 
 let group;
 let circles_group = L.featureGroup(); //initializing circles group
@@ -17,9 +14,15 @@ let circles_group = L.featureGroup(); //initializing circles group
 let filter;
 let map = L.map('map-view').setView([0, 0], 3);
 
+//Graphiques
+let graphCountries = document.querySelector('.statistics-country .graph');
+let graphAthlete = document.querySelector('.statistics-athlete .graph');
+
+let spanTitleGraph = document.querySelector('.statistics-athlete h2 span');
+
 
 //Fonctions
-function updateTitle(){
+function updateTitleMap(){
     if(reqYear == "allYears"){
         spanTitleMap.textContent = "de 1886 à 2014"
     }else{
@@ -64,20 +67,15 @@ function updateMedals(json_query){
                 }
             }
         }
-<<<<<<< Updated upstream
-        console.log(circles_group);
-        circles_group.addTo(map); //displaying features group in the map
-    })
-=======
         //console.log(circles_group);
-        circles_group.addTo(map).bringToFront(); //displaying features group in the map
+        circles_group.addTo(map); //displaying features group in the map
     })}
 
 function updateCountry(countryName){
     reqCountry = countryName;
     spanTitleGraph.textContent = reqCountry;
     updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
->>>>>>> Stashed changes
+
 }
 
 function updateGeom(replace = false){
@@ -95,25 +93,17 @@ function updateGeom(replace = false){
             if(replace){
                 group.clearLayers();
             }
-<<<<<<< Updated upstream
-            group = L.geoJSON(result).addTo(map);
-=======
             group = L.geoJSON(result).bindPopup(function (layer) {
                 updateCountry(layer.feature.properties.name);
                 return reqCountry;
             }).addTo(map);
             updateData();
->>>>>>> Stashed changes
         })
         .catch(function(error) {
             console.error(error);
         });
 }
 
-<<<<<<< Updated upstream
-function updateData(clear = false){
-    //Cercles proportionnelles
-=======
 
 //Affichage des graphiques
 function updateGraphCountries(result){
@@ -141,7 +131,7 @@ function updateGraphCountries(result){
     });
 }
 
-function updateGraphAthletes(country,discipline, year){
+function updateGraphAthletes(country, discipline, year){
     fetch(`http://localhost:3000/athletes/?country=${country}&discipline=${discipline}&year=${year}`)
         .then(rep => rep.json())
         .then(res => {
@@ -151,7 +141,6 @@ function updateGraphAthletes(country,discipline, year){
 
 
 function updateData(){
->>>>>>> Stashed changes
     fetch("http://localhost:3000/data",{
         method : "POST",
         headers: {
@@ -162,8 +151,10 @@ function updateData(){
     })
         .then(result => result.json())
         .then(result => {
-            console.log(result);
-            updateMedals(result, clear);
+            //console.log(result);
+            updateMedals(result);
+            //Mise à jour de la visualistion
+            //updateGraphCountries(result);
         })
 }
 
@@ -173,22 +164,17 @@ firstDiscipline.setAttribute("checked", true)
 firstYear.setAttribute("selected", true)
 
 //Mise à jour de la carte
-updateTitle();
+updateTitleMap();
 updateGeom();
+updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
 //updateData();
 
 //Interaction avec les disciplines
 $("#chooseADiscipline").change(function(){
     reqDiscipline = this.discipline.value;
-<<<<<<< Updated upstream
-
-    updateTitle();
-    updateData(true);
-=======
     updateTitleMap();
     updateData();
     updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
->>>>>>> Stashed changes
 })
 
 //Interaction avec les années
@@ -203,7 +189,7 @@ $("#chooseAYear").change(function(){
         reqYear = this.year.value;
     }
 
-    updateTitle();
+    updateTitleMap();
     updateGeom(true);
     updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
 })
@@ -216,3 +202,5 @@ L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/
     ext: 'png',
     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
+//Intéraction avec la carte

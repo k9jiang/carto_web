@@ -84,8 +84,6 @@ app.post("/data", (req, res) => {
     res.json(medals_by_country);
   })
 })
-<<<<<<< Updated upstream
-=======
 
 app.get("/athletes", (req, res) => {
   console.log(req.query.country, req.query.discipline, req.query.year); //we use req.query instead of req.parameters because the route is not explicit
@@ -149,32 +147,6 @@ app.get("/athletes", (req, res) => {
     }
     medals_by_athlete = result.rows;
     console.log(medals_by_athlete);
+    res.json(result.rows)
   })
 })
-  //let sql_query_parameters;
-  //let query_medals;
-  //
-  //if (req.query.discipline == 'disciplines' && req.query.country == 'allCountries') {
-  //  query_medals = "SELECT athlete.name, count(medal.medal) AS medalcount FROM athlete JOIN medal ON athlete.id = medal.athlete_id GROUP by athlete.name ORDER BY medalcount DESC LIMIT 20";
-  //}
-  //else if (req.query.discipline != 'disciplines' && req.query.country == 'allCountries') {
-  //  sql_query_parameters = [req.query.discipline];
-  //  query_medals = "SELECT athlete.name, count(medal.medal) AS medalcount, event.discipline FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id WHERE event.discipline = $1 GROUP BY event.discipline, athlete.name ORDER BY medalcount DESC LIMIT 20";
-  //}
-  //else if (req.query.discipline == 'disciplines' && req.query.country != 'allCountries') {
-  //  sql_query_parameters = [req.query.country];
-  //  query_medals = "SELECT athlete.name, country.name AS nationality, count(medal.medal) AS medalcount FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN country ON athlete.country_id = country.id WHERE country.name = $1 GROUP BY athlete.name, nationality ORDER BY medalcount DESC LIMIT 20";
-  //}
-  //else {
-  //  sql_query_parameters = [req.query.discipline, req.query.country];
-  //  query_medals = "SELECT athlete.name, country.name as nationality, count(medal.medal) AS medalcount, event.discipline FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id WHERE event.discipline = $1 AND country.name = $2 GROUP BY event.discipline, athlete.name, nationality ORDER BY medalcount DESC LIMIT 20";
-  //}
-  //pool.query(query_medals, sql_query_parameters, (err, result) => {
-  //  if (err) {
-  //    return console.error(err.message);
-  //  }
-  //  medals_by_athlete = result.rows;
-  //  console.log(medals_by_athlete);
-  //})
-  //res.json();
->>>>>>> Stashed changes
