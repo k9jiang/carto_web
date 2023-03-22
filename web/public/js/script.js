@@ -111,6 +111,7 @@ function updateGeom(replace = false){
 
 //Affichage des graphiques
 function updateGraphCountries(result){
+    console.log(graphCountries);
     let name = [];
     let medalcount = [];
 
@@ -175,7 +176,7 @@ function updateData(){
             //console.log(result);
             updateMedals(result);
             //Mise à jour de la visualistion
-            //updateGraphCountries(result);
+            updateGraphCountries(result);
         })
 }
 
