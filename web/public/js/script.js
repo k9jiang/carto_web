@@ -23,6 +23,8 @@ let map = L.map('map-view').setView([0, 0], 3);
 let graphCountries = document.querySelector('.statistics-country .graph');
 let graphAthlete = document.querySelector('.statistics-athlete .graph');
 
+let myChart = undefined;
+
 let spanTitleGraph = document.querySelector('.statistics-athlete h2 span');
 
 
@@ -51,7 +53,6 @@ function updateMedals(json_query){
     fetch('http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
     .then(result => result.json())
     .then(function(centroids) {
-        console.log(centroids.features[0].geometry.coordinates);
         circles_group.clearLayers() //clears circles features at the beginning of each change
         for (centroid of centroids.features) {
             let lnglat = centroid.geometry.coordinates;
@@ -60,12 +61,10 @@ function updateMedals(json_query){
             for (country of json_query) {
                 if (country.name == centroid.properties.name) {
                     medals = country.medalcount
-                    console.log(medals, country.name, centroid.properties.name);
                     L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1}).addTo(circles_group); //adding each circle of each country to the group
                 }
             }
         }
-        console.log(circles_group);
         circles_group.addTo(map); //displaying features group in the map
     })}
 
@@ -104,13 +103,29 @@ function updateGeom(replace = false){
 
 //Affichage des graphiques
 function updateGraphCountries(result){
-    new Chart(graphCountries, {
+    let name = [];
+    let medalcount = [];
+
+    for(let i in result){
+        name.push(result[i].name);
+        medalcount.push(result[i].medalcount);
+
+        if(i >= 19){
+            break;
+        }
+    }
+
+    if(myChart){
+        myChart.destroy();
+    }
+
+    myChart = new Chart(graphCountries, {
         type: 'bar',
         data: {
-            labels: result.name,
+            labels: name,
             datasets: [{
                 label: 'Nombre de médaille remporté',
-                data: result.medalcount,
+                data: medalcount,
                 borderWidth: 1
             }]
         },
@@ -121,8 +136,9 @@ function updateGraphCountries(result){
                 }
             },
             onClick: (e) => {
-                console.log(this);
-                updateCountry(this); //insertion du nom du pays
+                //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
+                console.log(this)
+                //updateCountry(this); //insertion du nom du pays
             }
         }
     });
@@ -132,7 +148,7 @@ function updateGraphAthletes(country){
     fetch("http://localhost:3000/athletes/"+country)
         .then(rep => rep.json())
         .then(res => {
-            console.log(res)
+            //console.log(res)
         })
 }
 
@@ -148,10 +164,8 @@ function updateData(){
     })
         .then(result => result.json())
         .then(result => {
-            console.log(result);
             updateMedals(result);
-            //Mise à jour de la visualistion
-            //updateGraphCountries(result);
+            updateGraphCountries(result);
         })
 }
 
@@ -189,7 +203,7 @@ firstYear.setAttribute("selected", true)
 //Mise à jour de la carte
 updateTitleMap();
 updateGeom();
-//updateData();
+updateData();
 
 
 //Interaction avec les disciplines
@@ -203,7 +217,6 @@ fetch("http://localhost:3000/disciplines")
     })
 
 $("#search-discipline").keyup(function(){
-    console.log(this.value);
     displayDisciplines(this.value);
 })
 
