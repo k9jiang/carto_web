@@ -84,3 +84,8 @@ app.post("/data", (req, res) => {
     res.json(medals_by_country);
   })
 })
+
+app.get("/athletes/:country", (req, res) => {
+  console.log(req.params.country);
+  res.json(req.params.country);
+})
