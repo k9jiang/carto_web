@@ -40,7 +40,6 @@ app.get("/disciplines", (req, res) => {
     if (err) {
       return console.error(err.message);
     }
-    console.log(result.rows);
     res.json(result.rows);
   })
 })
@@ -148,7 +147,6 @@ app.get("/athletes", (req, res) => {
       return console.error(err.message);
     }
     medals_by_athlete = result.rows;
-    console.log(medals_by_athlete);
     res.json(result.rows)
   })
 })

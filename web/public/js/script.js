@@ -49,7 +49,6 @@ function getRadius(value) { //returns real proportionnal circles according to th
     else {
         r_min = 0.75 //setting a tinier min radius if we get all of both disciplines and editions of olympics.
     }
-    console.log(r_min)
     return r_min * Math.sqrt(value / v_min)
 }
 
@@ -111,7 +110,6 @@ function updateGeom(replace = false){
 
 //Affichage des graphiques
 function updateGraphCountries(result){
-    console.log(graphCountries);
     let name = [];
     let medalcount = [];
 
@@ -146,7 +144,7 @@ function updateGraphCountries(result){
             },
             onClick: (e) => {
                 //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
-                console.log(this)
+                //console.log(this)
                 //updateCountry(this); //insertion du nom du pays
             }
         }
@@ -184,11 +182,11 @@ function displayDisciplines(text = ""){
 
     formDiscipline.innerHTML = "";
 
-    if(text === "" ){
+    if(text === ""){
         for(let discipline of disciplines){
             let inputDiscipline = `<div>
-            <input type="radio" name="discipline" value="${discipline}">
-            <label for="discipline">${discipline}</label>
+            <input type="radio" name="discipline" id="${discipline}" value="${discipline}">
+            <label for="${discipline}">${discipline}</label>
             </div>`;
             
             formDiscipline.innerHTML += inputDiscipline;
@@ -197,8 +195,8 @@ function displayDisciplines(text = ""){
         for(let discipline of disciplines){
             if(discipline.toLowerCase().includes(text.toLowerCase())){
                 let inputDiscipline = `<div>
-                <input type="radio" name="discipline" value="${discipline}">
-                <label for="discipline">${discipline}</label>
+                <input type="radio" name="discipline" id="${discipline}" value="${discipline}">
+                <label for="${discipline}">${discipline}</label>
             </div>`;
             
             formDiscipline.innerHTML += inputDiscipline;

@@ -71,14 +71,21 @@ header nav ul div{
     width: 1000px;
 }
 
-#scroll input[type="radio"]{
-    appearance: none;
+#scroll fieldset{
+    margin: 0px;
+    padding: 0px;
 }
 
-#scroll input[type="radio"]:checked{
+#scroll input[type="radio"]{
+    display: none;
+}
+
+#scroll input[type="radio"]:checked + label{
     background-color: aqua;
 }
 
 #scroll label{
     cursor: pointer;
+    display: inline-block;
+    width: 100%;
 }
