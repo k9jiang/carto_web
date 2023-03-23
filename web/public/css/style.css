@@ -6,6 +6,7 @@ body{
 
 *{
     font-family: "Roboto", "Raleway", Arial, sans-serif;
+    font-weight: normal;
 }
 
 h1{
@@ -58,6 +59,13 @@ header nav ul div{
     margin: 0px 20px;
 }
 
+
+/*Container*/
+
+.container{
+    display: flex;
+}
+
 #scroll{
     background-color: white;
     width: 240px;
@@ -67,8 +75,8 @@ header nav ul div{
 }
 
 #map-view{
-    height: 400px;
-    width: 1000px;
+    height: 500px;
+    width: 920px;
 }
 
 #scroll fieldset{
@@ -88,4 +96,21 @@ header nav ul div{
     cursor: pointer;
     display: inline-block;
     width: 100%;
+}
+
+
+/*Statistiques*/
+
+.statistics{
+    position: relative;
+    border: 0.5px solid #acacac;
+}
+.statistics .nodata{
+    opacity: 0;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background-color: #878787;
 }

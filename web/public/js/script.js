@@ -17,9 +17,11 @@ let group;
 let circles_group = L.featureGroup(); //initializing circles group
 
 let filter;
-let map = L.map('map-view').setView([0, 0], 3);
+let map = L.map('map-view').setView([20, 20], 2);
 
 //Graphiques
+let noDataCountries = document.querySelector('.statistics-country .nodata');
+let noDataAthlete = document.querySelector('.statistics-athlete .nodata');
 let graphCountries = document.querySelector('.statistics-country .graph');
 let graphAthlete = document.querySelector('.statistics-athlete .graph');
 let countriesChart = undefined;
@@ -160,7 +162,12 @@ function updateAthletesData(country, discipline, year){
             if(athletesChart){
                 athletesChart.destroy();
             }
-            athletesChart = updateGraph(res, graphAthlete)
+            if(res.length == 0){
+                noDataAthlete.style.opacity = 1;
+            }else{
+                noDataAthlete.style.opacity = 0;
+                athletesChart = updateGraph(res, graphAthlete)
+            }
             //updateGraph(res, graphAthlete)
         })
 }
@@ -183,7 +190,12 @@ function updateCountryData(){
             if(countriesChart){
                 countriesChart.destroy();
             }
-            countriesChart = updateGraph(result, graphCountries)
+            if(result.length == 0){
+                noDataCountries.style.opacity = 1;
+            }else{
+                noDataCountries.style.opacity = 0;
+                countriesChart = updateGraph(result, graphCountries)
+            }
             //updateGraph(result, graphCountries);
         })
 }
@@ -266,7 +278,7 @@ $("#chooseAYear").change(function(){
 //Affichage du fond de carte carte
 L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.{ext}', {
     subdomains: 'abcd',
-    minZoom: 3,
+    minZoom: 2,
     maxZoom: 20,
     ext: 'png',
     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
