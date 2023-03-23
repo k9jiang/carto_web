@@ -26,7 +26,8 @@ let graphCountries = document.querySelector('.statistics-country .graph');
 let graphAthlete = document.querySelector('.statistics-athlete .graph');
 let countriesChart = undefined;
 let athletesChart = undefined;
-let spanTitleGraph = document.querySelector('.statistics-athlete h2 span');
+let spanTitleGraph = document.querySelector('.statistics-country .title h2 span');
+let spanTitleGraph2 = document.querySelectorAll('.statistics-athlete .title h2 span');
 
 //Fonctions
 function updateTitleMap(){
@@ -84,7 +85,7 @@ function updateMedals(json_query){
 
 function updateCountry(countryName){
     reqCountry = countryName;
-    spanTitleGraph.textContent = reqCountry;
+    spanTitleGraph2[1].textContent = "de " + reqCountry;
     updateAthletesData(reqCountry, reqDiscipline, reqYear);
 
 }
@@ -162,9 +163,15 @@ function updateAthletesData(country, discipline, year){
             if(athletesChart){
                 athletesChart.destroy();
             }
+
             if(res.length == 0){
                 noDataAthlete.style.opacity = 1;
             }else{
+                if(res.length < 20){
+                    spanTitleGraph2[0].textContent = "premiers";
+                }else{
+                    spanTitleGraph2[0].textContent = "20 premiers";
+                }
                 noDataAthlete.style.opacity = 0;
                 athletesChart = updateGraph(res, graphAthlete)
             }
@@ -193,6 +200,11 @@ function updateCountryData(){
             if(result.length == 0){
                 noDataCountries.style.opacity = 1;
             }else{
+                if(result.length < 20){
+                    spanTitleGraph.textContent = "premiers";
+                }else{
+                    spanTitleGraph.textContent = "20 premiers";
+                }
                 noDataCountries.style.opacity = 0;
                 countriesChart = updateGraph(result, graphCountries)
             }
