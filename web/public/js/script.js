@@ -28,6 +28,7 @@ let countriesChart = undefined;
 let athletesChart = undefined;
 let spanTitleGraph = document.querySelector('.statistics-country .title h2 span');
 let spanTitleGraph2 = document.querySelectorAll('.statistics-athlete .title h2 span');
+let spanTitleNoGraph2 = document.querySelector('.statistics-athlete .nodata h2 span');
 
 //Fonctions
 function updateTitleMap(){
@@ -166,6 +167,7 @@ function updateAthletesData(country, discipline, year){
 
             if(res.length == 0){
                 noDataAthlete.style.opacity = 1;
+                spanTitleNoGraph2.textContent = reqCountry;
             }else{
                 if(res.length < 20){
                     spanTitleGraph2[0].textContent = "premiers";
