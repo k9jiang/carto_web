@@ -166,15 +166,19 @@ function updateAthletesData(country, discipline, year){
             }
 
             if(res.length == 0){
-                noDataAthlete.style.opacity = 1;
-                spanTitleNoGraph2.textContent = reqCountry;
+                noDataAthlete.style.display = "block";
+                if(reqCountry == "allCountries"){
+                    spanTitleNoGraph2.textContent = "monde";
+                }else{
+                    spanTitleNoGraph2.textContent = reqCountry;
+                }
             }else{
                 if(res.length < 20){
                     spanTitleGraph2[0].textContent = "premiers";
                 }else{
                     spanTitleGraph2[0].textContent = "20 premiers";
                 }
-                noDataAthlete.style.opacity = 0;
+                noDataAthlete.style.display = "none";
                 athletesChart = updateGraph(res, graphAthlete)
             }
             //updateGraph(res, graphAthlete)
@@ -200,14 +204,14 @@ function updateCountryData(){
                 countriesChart.destroy();
             }
             if(result.length == 0){
-                noDataCountries.style.opacity = 1;
+                noDataCountries.style.display = "block";
             }else{
                 if(result.length < 20){
                     spanTitleGraph.textContent = "premiers";
                 }else{
                     spanTitleGraph.textContent = "20 premiers";
                 }
-                noDataCountries.style.opacity = 0;
+                noDataCountries.style.display = "none";
                 countriesChart = updateGraph(result, graphCountries)
             }
             //updateGraph(result, graphCountries);
@@ -219,6 +223,8 @@ function displayDisciplines(text = ""){
     formDiscipline.innerHTML = "";
 
     if(text === ""){
+        firstDiscipline.setAttribute("checked", true)
+
         for(let discipline of disciplines){
             let inputDiscipline = `<div>
             <input type="radio" name="discipline" id="${discipline}" value="${discipline}">
@@ -262,6 +268,7 @@ fetch("http://localhost:3000/disciplines")
     })
 
 $("#search-discipline").keyup(function(){
+    console.log(this.value);
     displayDisciplines(this.value);
 })
 
