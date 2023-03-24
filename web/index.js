@@ -109,6 +109,9 @@ app.get("/athletes", (req, res) => {
     let param = query_parameters[i]
     if (!is_default_query[i]) {
       if (i==0){
+        if (param == "Cote d'Ivoire") {
+          param = "Cote d''Ivoire"
+        }
         select_clause += ", country.name AS nationality";
         groupby_clause += ", nationality";
         join_clause +=" JOIN country ON athlete.country_id = country.id";

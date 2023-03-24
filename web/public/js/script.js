@@ -31,8 +31,26 @@ let spanTitleGraph2 = document.querySelectorAll('.statistics-athlete .title h2 s
 let spanTitleNoGraph2 = document.querySelector('.statistics-athlete .nodata h2 span');
 let pct_best_athlete = document.querySelector('.statistics-athlete .percentage');
 let pct_best_country = document.querySelector('.statistics-country .percentage');
+let x_first_athletes = document.querySelector('.statistics-athlete .title .key-figure p span');
+let x_first_countries = document.querySelector('.statistics-country .title .key-figure p span');
 
 //Fonctions
+function breaking_gap(array){
+    gaps = []
+    for (let i = 0 ; i < array.length -1 ; i++){
+        gaps.push(array[i]-array[i+1]);
+    }
+    console.log(gaps);
+    let avg_gap = (gaps.reduce((accum, b) => accum + b) / gaps.length).toFixed(20);
+    console.log(avg_gap);
+    for (i in gaps) {
+        if (gaps[i] > 2*avg_gap) { //setting a breaking gap if a gap is higher than twice the average gap
+            console.log(i);
+            return i;
+        }
+    }
+    return gaps.length;
+}
 function updateTitleMap(){
     if(reqYear == "allYears"){
         spanTitleMap.textContent = "de 1886 à 2014"
@@ -47,16 +65,17 @@ function updateTitleMap(){
     }
 }
 
+
 function getRadius(value) { //returns real proportionnal circles according to the represented value
     let v_min = 1;
     let r_min;
     if ((reqDiscipline != 'discipline' && reqYear !='allYears')) {
-        r_min = 5
+        r_min = 5;
     }
     else {
-        r_min = 0.75 //setting a tinier min radius if we get all of both disciplines and editions of olympics.
+        r_min = 0.75; //setting a tinier min radius if we get all of both disciplines and editions of olympics.
     }
-    return r_min * Math.sqrt(value / v_min)
+    return r_min * Math.sqrt(value / v_min);
 }
 
 function updateMedals(json_query){
@@ -124,6 +143,7 @@ function updateGraph(result, graphic){
     let name = [];
     let medalcount = [];
     let total_medals = 0;
+    let medals=[]
 
     for(let i in result){
         name.push(result[i].name);
@@ -136,16 +156,33 @@ function updateGraph(result, graphic){
 
     for (entity of result) {
         total_medals += parseInt(entity.medalcount);
+        if (entity.medalcount != 0) {
+            medals.push(entity.medalcount);
+        }
     }
+    break_index = breaking_gap(medals);
+    let gathered_medals = 0;
+    for (i in medals) {
+        gathered_medals += parseInt(medals[i]);
+        if (i == break_index) {
+            break;
+        }
+    }
+    console.log(gathered_medals);
+    console.log(total_medals);
+    let ratio = (gathered_medals*100/total_medals).toFixed(2)
 
-    let ratio = parseFloat(parseInt(medalcount[0])*100/total_medals.toFixed(2));
-    console.log(ratio);
+
+    //let ratio = parseFloat(parseInt(medalcount[0])*100/total_medals).toFixed(2);
+    //console.log(ratio);
 
     if (graphic == graphAthlete) {
-        pct_best_athlete.textContent = ratio;
+        pct_best_athlete.textContent = ratio+"%";
+        x_first_athletes.textContent = `${break_index+1}`;
     }
     else {
-        pct_best_country.textContent = ratio;
+        pct_best_country.textContent = ratio+"%";
+        x_first_countries.textContent = `${break_index+1}`;
     }
 
     return new Chart(graphic, {
@@ -153,7 +190,7 @@ function updateGraph(result, graphic){
         data: {
             labels: name,
             datasets: [{
-                label: 'Nombre de médaille remporté',
+                label: 'Nombre de médaille(s) remportée(s)',
                 data: medalcount,
                 borderWidth: 1
             }]
