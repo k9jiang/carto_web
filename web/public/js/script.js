@@ -198,7 +198,7 @@ function updateGraph(result, graphic) {
         
     }
 
-    return new Chart(graphic, {
+    const chart = new Chart(graphic, {
         type: 'bar',
         data: {
             labels: name,
@@ -238,14 +238,24 @@ function updateGraph(result, graphic) {
                 legend: {
                     display: false
                 }
+            },
+            onClick: (e) => {
+                const canvasPosition = Chart.helpers.getRelativePosition(e, chart);
+    
+                // Substitute the appropriate scale IDs
+                const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
+                let value = name[dataX];
+
+                if (graphic == graphAthlete) {
+                }
+                else {
+                    updateCountry(value)
+                }
             }
-            /*onClick: (e) => {
-                //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
-                console.log(this);
-                //updateCountry(this); //insertion du nom du pays
-            }*/
         }
+
     });
+    return chart;
 }
 
 
