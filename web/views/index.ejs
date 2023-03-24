@@ -14,7 +14,7 @@
 </section>
 <section class="part-two">
     <form id="chooseAYear">
-        <h2>Statistiques</h2>
+        <h2>Statistiques :</h2>
         <div>
             <input type="radio" id="year" name="year" value="allYears" checked>
             <label for="year">De 1886 à 2014</label>
@@ -22,7 +22,7 @@
         <div>
             <input type="radio" name="year" id="year" value="year">
             <label for="year">Sur une année</label>
-            <select id="listOfYear" name="listOfYear" disabled>
+            <select id="listOfYear" name="listOfYear" size="4" disabled>
                 <option value=''>Choisissez une année</option>
                 <% for (const year of years) { %>
                     <option value="<%= year.year %>"><%= year.year %></option>

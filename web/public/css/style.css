@@ -86,10 +86,10 @@ header nav ul div{
 
 .container{
     display: flex;
+    margin: auto;
 }
 
 #scroll{
-    background-color: white;
     height: 400px;
     margin: 0px;
     padding: 0px;
@@ -119,7 +119,11 @@ header nav ul div{
     width: 12px;
 }
 
-#chooseADiscipline{
+#scroll{
+    width: 234px;
+}
+
+#chooseADiscipline div{
     overflow: hidden;
 }
 
@@ -137,6 +141,48 @@ header nav ul div{
     width: 100%;
     padding: 10px;
     padding-right: 0px;
+}
+
+#chooseAYear{
+    display: flex;
+    margin-top: 10px;
+    height: 45px;
+}
+
+#chooseAYear h2{
+    margin: 0px 0px 0px 10px;
+}
+
+#chooseAYear div{
+    margin-left: 80px;
+}
+
+#chooseAYear div *{
+    vertical-align: middle;
+}
+
+#chooseAYear input[type="radio"]{
+    position: relative;
+    appearance: unset;
+    border: 1px solid black;
+    width: 22px;
+    height: 20px;
+    border-radius: 16px;
+}
+
+#chooseAYear input[type="radio"]:checked::after{
+    content: "";
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
+    background-color: black;
+    border-radius: 16px;
+}
+
+#chooseAYear #listOfYear{
+    vertical-align: top;
 }
 
 
