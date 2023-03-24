@@ -54,13 +54,13 @@ function breaking_gap(array){
 function updateTitleMap(){
     if(reqYear == "allYears"){
         spanTitleMap.textContent = "de 1886 à 2014"
-    }else{
+    } else {
         spanTitleMap.textContent = ` en ${reqYear}`
     }
 
-    if(reqDiscipline == "disciplines"){
+    if (reqDiscipline == "disciplines") {
         spanTitleMap.textContent += " dans toutes les disciplines"
-    }else{
+    } else {
         spanTitleMap.textContent += ` en ${reqDiscipline}`
     }
 }
@@ -77,6 +77,7 @@ function getRadius(value) { //returns real proportionnal circles according to th
     }
     return r_min * Math.sqrt(value / v_min);
 }
+
 
 function updateMedals(json_query){
     fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
@@ -95,27 +96,26 @@ function updateMedals(json_query){
                     let circle_prop;
                     circle_prop = L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1, country: country.name})
                         .addTo(circles_group)//adding each circle of each country to the group
-                         
                 }
             }
-        }
-        //console.log(circles_group);
-        circles_group
-            .on("click", (e) => {updateCountry(e.layer.options.country)})
-            .addTo(map); //displaying features group in the map
-    })}
+            //console.log(circles_group);
+            circles_group
+                .on("click", (e) => { updateCountry(e.layer.options.country) })
+                .addTo(map); //displaying features group in the map
+        })
+}
 
-function updateCountry(countryName){
+function updateCountry(countryName) {
     reqCountry = countryName;
     spanTitleGraph2[1].textContent = "de " + reqCountry;
     updateAthletesData(reqCountry, reqDiscipline, reqYear);
 
 }
 
-function updateGeom(replace = false){
-    if(reqYear == 'allYears'){
+function updateGeom(replace = false) {
+    if (reqYear == 'allYears') {
         filter = "";
-    }else{
+    } else {
         filter = `&CQL_FILTER=first_participation<=${reqYear}%20AND%20last_participation>=${reqYear}`;
     }
     const url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
@@ -124,7 +124,8 @@ function updateGeom(replace = false){
     fetch(url)
         .then(result => result.json())
         .then(result => {
-            if(replace){
+            console.log(result);
+            if (replace) {
                 group.clearLayers();
             }
             group = L.geoJSON(result).bindPopup(function (layer) {
@@ -133,23 +134,23 @@ function updateGeom(replace = false){
             }).addTo(map);
             updateCountryData();
         })
-        .catch(function(error) {
+        .catch(function (error) {
             console.error(error);
         });
 }
 
 //Affichage des graphiques
-function updateGraph(result, graphic){
+function updateGraph(result, graphic) {
     let name = [];
     let medalcount = [];
     let total_medals = 0;
     let medals=[]
 
-    for(let i in result){
+    for (let i in result) {
         name.push(result[i].name);
         medalcount.push(result[i].medalcount);
 
-        if(i >= 19){
+        if (i >= 9) {
             break;
         }
     }
@@ -193,13 +194,37 @@ function updateGraph(result, graphic){
                 name: name,
                 label: 'Nombre de médaille(s) remportée(s)',
                 data: medalcount,
-                borderWidth: 1
+                barThickness: 8
             }]
         },
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: {
+                        lineWidth: 0
+                    },
+                    ticks: {
+                        display: false
+                    }
+                },
+                x: {
+                    grid: {
+                        lineWidth: 0
+                    },
+                    ticks: {
+                        maxRotation: 70,
+                        minRotation: 70,
+                        font: {
+                            size: 9
+                        }
+                    },
+                
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
                 }
             }
             /*onClick: (e) => {
@@ -211,19 +236,20 @@ function updateGraph(result, graphic){
     });
 }
 
-function updateAthletesData(country, discipline, year){
+
+function updateAthletesData(country, discipline, year) {
     fetch(`http://localhost:3000/athletes/?country=${country}&discipline=${discipline}&year=${year}`)
         .then(rep => rep.json())
         .then(res => {
-            if(athletesChart){
+            if (athletesChart) {
                 athletesChart.destroy();
             }
 
-            if(res.length == 0){
+            if (res.length == 0) {
                 noDataAthlete.style.display = "block";
-                if(reqCountry == "allCountries"){
+                if (reqCountry == "allCountries") {
                     spanTitleNoGraph2.textContent = "monde";
-                }else{
+                } else {
                     spanTitleNoGraph2.textContent = reqCountry;
                 }
             }else{
@@ -240,30 +266,30 @@ function updateAthletesData(country, discipline, year){
 }
 
 
-function updateCountryData(){
-    fetch("http://localhost:3000/data",{
-        method : "POST",
+function updateCountryData() {
+    fetch("http://localhost:3000/data", {
+        method: "POST",
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({"discipline": reqDiscipline, "year": reqYear})
+        body: JSON.stringify({ "discipline": reqDiscipline, "year": reqYear })
     })
         .then(result => result.json())
         .then(result => {
             //console.log(result);
             updateMedals(result);
             //Mise à jour de la visualistion
-            if(countriesChart){
+            if (countriesChart) {
                 countriesChart.destroy();
             }
-            if(result.length == 0){
+            if (result.length == 0) {
                 noDataCountries.style.display = "block";
-            }else{
-                if(result.length < 20){
+            } else {
+                if (result.length < 10) {
                     spanTitleGraph.textContent = "premiers";
-                }else{
-                    spanTitleGraph.textContent = "20 premiers";
+                } else {
+                    spanTitleGraph.textContent = "10 premiers";
                 }
                 noDataCountries.style.display = "none";
                 countriesChart = updateGraph(result, graphCountries)
@@ -272,31 +298,31 @@ function updateCountryData(){
         })
 }
 
-function displayDisciplines(text = ""){
+function displayDisciplines(text = "") {
 
     formDiscipline.innerHTML = "";
 
-    if(text === ""){
+    if (text === "") {
         firstDiscipline.setAttribute("checked", true)
 
-        for(let discipline of disciplines){
+        for (let discipline of disciplines) {
             let inputDiscipline = `<div>
             <input type="radio" name="discipline" id="${discipline}" value="${discipline}">
             <label for="${discipline}">${discipline}</label>
             </div>`;
-            
+
             formDiscipline.innerHTML += inputDiscipline;
         }
-    }else{
-        for(let discipline of disciplines){
-            if(discipline.toLowerCase().includes(text.toLowerCase())){
+    } else {
+        for (let discipline of disciplines) {
+            if (discipline.toLowerCase().includes(text.toLowerCase())) {
                 let inputDiscipline = `<div>
                 <input type="radio" name="discipline" id="${discipline}" value="${discipline}">
                 <label for="${discipline}">${discipline}</label>
             </div>`;
-            
-            formDiscipline.innerHTML += inputDiscipline;
-            }       
+
+                formDiscipline.innerHTML += inputDiscipline;
+            }
         }
     }
 }
@@ -315,18 +341,18 @@ updateAthletesData(reqCountry, reqDiscipline, reqYear);
 fetch("http://localhost:3000/disciplines")
     .then(rep => rep.json())
     .then(res => {
-        for(let discipline of res){
+        for (let discipline of res) {
             disciplines.push(discipline.discipline);
         }
         displayDisciplines();
     })
 
-$("#search-discipline").keyup(function(){
+$("#search-discipline").keyup(function () {
     console.log(this.value);
     displayDisciplines(this.value);
 })
 
-$("#chooseADiscipline").change(function(){
+$("#chooseADiscipline").change(function () {
     reqDiscipline = this.discipline.value;
     updateTitleMap();
     updateCountryData();
@@ -334,14 +360,14 @@ $("#chooseADiscipline").change(function(){
 })
 
 //Interaction avec les années
-$("#chooseAYear").change(function(){
+$("#chooseAYear").change(function () {
     selectYear.setAttribute("disabled", true);
 
     //Si une année est sélectionnée
-    if(this.year.value == 'year'){
+    if (this.year.value == 'year') {
         selectYear.removeAttribute("disabled");
         reqYear = this.listOfYear.value;
-    }else{
+    } else {
         reqYear = this.year.value;
     }
 
