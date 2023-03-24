@@ -28,7 +28,6 @@ li, h2{
 
 label, #search-discipline{
     font-size: 13px;
-    font-weight: lighter;
 }
 
 
@@ -86,10 +85,11 @@ header nav ul div{
 
 .container{
     display: flex;
+    margin: auto;
+    justify-content: center;
 }
 
 #scroll{
-    background-color: white;
     height: 400px;
     margin: 0px;
     padding: 0px;
@@ -102,25 +102,37 @@ header nav ul div{
     width: 920px;
 }
 
-#scroll::-webkit-scrollbar {
+#scroll::-webkit-scrollbar, #listOfYear::-webkit-scrollbar {
     all: unset !important;
 }
 
-#scroll::-webkit-scrollbar-track {
+#scroll::-webkit-scrollbar-track, #listOfYear::-webkit-scrollbar-track {
     background: transparent;
     width: 15px;
 }
 
-#scroll::-webkit-scrollbar-thumb {
-    background-color: #a2a2a2;  
+#scroll::-webkit-scrollbar-thumb, #listOfYear::-webkit-scrollbar-thumb {
+    background-color: #7c7c7c;  
 }
 
 #scroll::-webkit-scrollbar {
     width: 12px;
 }
 
-#chooseADiscipline{
+#scroll{
+    width: 234px;
+}
+
+#chooseADiscipline div{
     overflow: hidden;
+}
+
+#chooseADiscipline label{
+    font-weight: lighter;
+}
+
+#chooseADiscipline label:hover{
+    text-decoration: underline;
 }
 
 #chooseADiscipline input[type="radio"]{
@@ -128,7 +140,9 @@ header nav ul div{
 }
 
 #chooseADiscipline input[type="radio"]:checked + label{
-    background-color: aqua;
+    background-color: rgb(203, 203, 203);
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 #chooseADiscipline label{
@@ -137,6 +151,50 @@ header nav ul div{
     width: 100%;
     padding: 10px;
     padding-right: 0px;
+}
+
+#chooseAYear{
+    display: flex;
+    margin-top: 10px;
+    height: 45px;
+}
+
+#chooseAYear h2{
+    margin: 0px 0px 0px 10px;
+}
+
+#chooseAYear div{
+    margin-left: 80px;
+}
+
+#chooseAYear div *{
+    vertical-align: middle;
+}
+
+#chooseAYear input[type="radio"]{
+    position: relative;
+    appearance: unset;
+    border: 1px solid black;
+    width: 25px;
+    height: 23px;
+    border-radius: 16px;
+}
+
+#chooseAYear input[type="radio"]:checked::after{
+    content: "";
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
+    background-color: black;
+    border-radius: 16px;
+}
+
+#chooseAYear #listOfYear{
+    vertical-align: top;
+    text-align: center;
+    width: 90px;
 }
 
 
@@ -152,6 +210,7 @@ header nav ul div{
 .statistics{
     position: relative;
     border: 0.5px solid #a2a2a2;
+    height: 295px;
 }
 .statistics .nodata{
     display: none;
@@ -161,4 +220,127 @@ header nav ul div{
     left: 0px;
     right: 0px;
     background-color: #afafaf;
+}
+
+.title{
+}
+
+.graph{
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    height: 200px;
+}
+
+
+@media (max-width: 1515px) {
+    .container{
+        flex-wrap: wrap;
+    }
+
+    .part-three{
+        display: flex;
+        justify-content: center;
+    }
+
+    .statistics, .graph{
+        width: 400px;
+    }
+}
+
+@media (max-width: 1185px) {
+    .container{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .part-one{
+        width: 90%;
+        border: none;
+    }
+    
+    .part-two{
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #chooseAYear{
+        justify-content: space-between;
+    }
+
+    .map{
+        width: 100%;
+    }
+    
+    #map-view{
+        width: 100%;
+    }
+
+    #scroll{
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        height: 100px;
+        margin-bottom: 20px;
+    }
+    
+    #scroll label{
+        width: 120px;
+    }
+
+    #scroll label{
+        padding-right: 10px;
+    }
+}
+
+@media (max-width: 1185px) {
+    .part-three{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 640px) {
+    header nav ul{
+        padding: 0px;
+        margin: 0px;
+        height: 55px;
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    header nav ul div{
+        margin: 0px;
+    }
+
+    header nav li{
+        max-width: 30%;
+    }
+    
+    header nav a{
+        margin: 0px;
+    }
+
+    #chooseAYear{
+        width: 100%;
+    }
+    
+    #chooseAYear div{
+        margin-left: 0px;
+    }
+
+    #chooseAYear #listOfYear{
+        width: 60px;
+        float: right;
+    }
+    
+    .map h2{
+        width: 80%;
+    }
+
+    .statistics, .graph{
+        width: 100%;
+    }
 }
