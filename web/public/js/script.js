@@ -31,8 +31,8 @@ let spanTitleGraph2 = document.querySelectorAll('.statistics-athlete .title h2 s
 let spanTitleNoGraph2 = document.querySelector('.statistics-athlete .nodata h2 span');
 let pct_best_athlete = document.querySelector('.statistics-athlete .percentage');
 let pct_best_country = document.querySelector('.statistics-country .percentage');
-let x_first_athletes = document.querySelector('.statistics-athlete .title .key-figure p span');
-let x_first_countries = document.querySelector('.statistics-country .title .key-figure p span');
+let x_first_athletes = document.querySelector('.statistics-athlete .title .key-figure p');
+let x_first_countries = document.querySelector('.statistics-country .title .key-figure p');
 
 //Fonctions
 function breaking_gap(array){
@@ -160,7 +160,7 @@ function updateGraph(result, graphic){
             medals.push(entity.medalcount);
         }
     }
-    break_index = breaking_gap(medals);
+    break_index = parseInt(breaking_gap(medals));
     let gathered_medals = 0;
     for (i in medals) {
         gathered_medals += parseInt(medals[i]);
@@ -178,11 +178,22 @@ function updateGraph(result, graphic){
 
     if (graphic == graphAthlete) {
         pct_best_athlete.textContent = ratio+"%";
-        x_first_athletes.textContent = `${break_index+1}`;
+        if (break_index == 0) {
+            x_first_athletes.textContent = "1 athlète a obtenu";
+        }
+        else {
+            x_first_athletes.textContent = `${break_index+1} athlètes ont obtenu`;
+        }
     }
     else {
         pct_best_country.textContent = ratio+"%";
-        x_first_countries.textContent = `${break_index+1}`;
+        if (break_index == 0) {
+            x_first_countries.textContent = "1 pays détient";
+        }
+        else {
+            x_first_countries.textContent = `${break_index+1} pays détiennent`;
+        }
+        
     }
 
     return new Chart(graphic, {
