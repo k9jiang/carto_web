@@ -87,6 +87,7 @@ header nav ul div{
 .container{
     display: flex;
     margin: auto;
+    justify-content: center;
 }
 
 #scroll{
@@ -207,4 +208,111 @@ header nav ul div{
     left: 0px;
     right: 0px;
     background-color: #afafaf;
+}
+
+
+@media (max-width: 1515px) {
+    .container{
+        flex-wrap: wrap;
+    }
+
+    .part-three{
+        display: flex;
+        justify-content: center;
+    }
+
+    .statistics, .graph{
+        width: 400px;
+    }
+}
+
+@media (max-width: 1185px) {
+    .container{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .part-one{
+        width: 90%;
+        border: none;
+    }
+    
+    .part-two{
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #chooseAYear{
+        justify-content: space-between;
+    }
+
+    .map{
+        width: 100%;
+    }
+    
+    #map-view{
+        width: 100%;
+    }
+
+    #scroll{
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        height: 100px;
+        margin-bottom: 20px;
+    }
+    
+    #scroll label{
+        width: 120px;
+    }
+
+    #scroll label{
+        padding-right: 10px;
+    }
+}
+
+@media (max-width: 1185px) {
+    .part-three{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 640px) {
+    header nav ul{
+        padding: 0px;
+        margin: 0px;
+        height: 55px;
+        display: flex;
+        justify-content: space-around;
+    }
+    
+    header nav ul div{
+        margin: 0px;
+    }
+
+    header nav li{
+        max-width: 30%;
+    }
+    
+    header nav a{
+        margin: 0px;
+    }
+
+    #chooseAYear{
+        width: 100%;
+    }
+    
+    #chooseAYear div{
+        margin-left: 0px;
+    }
+    
+    .map h2{
+        width: 80%;
+    }
+
+    .statistics, .graph{
+        width: 100%;
+    }
 }
