@@ -29,6 +29,8 @@ let athletesChart = undefined;
 let spanTitleGraph = document.querySelector('.statistics-country .title h2 span');
 let spanTitleGraph2 = document.querySelectorAll('.statistics-athlete .title h2 span');
 let spanTitleNoGraph2 = document.querySelector('.statistics-athlete .nodata h2 span');
+let pct_best_athlete = document.querySelector('.statistics-athlete .percentage');
+let pct_best_country = document.querySelector('.statistics-country .percentage');
 
 //Fonctions
 function updateTitleMap(){
@@ -58,7 +60,7 @@ function getRadius(value) { //returns real proportionnal circles according to th
 }
 
 function updateMedals(json_query){
-    fetch('http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
+    fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
     .then(result => result.json())
     .then(function(centroids) {
         //console.log(centroids.features[0].geometry.coordinates);
@@ -97,7 +99,7 @@ function updateGeom(replace = false){
     }else{
         filter = `&CQL_FILTER=first_participation<=${reqYear}%20AND%20last_participation>=${reqYear}`;
     }
-    const url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
+    const url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
               + filter;
     //Affichage des pays
     fetch(url)
@@ -121,6 +123,7 @@ function updateGeom(replace = false){
 function updateGraph(result, graphic){
     let name = [];
     let medalcount = [];
+    let total_medals = 0;
 
     for(let i in result){
         name.push(result[i].name);
@@ -129,6 +132,20 @@ function updateGraph(result, graphic){
         if(i >= 19){
             break;
         }
+    }
+
+    for (entity of result) {
+        total_medals += parseInt(entity.medalcount);
+    }
+
+    let ratio = parseFloat(parseInt(medalcount[0])*100/total_medals.toFixed(2));
+    console.log(ratio);
+
+    if (graphic == graphAthlete) {
+        pct_best_athlete.textContent = ratio;
+    }
+    else {
+        pct_best_country.textContent = ratio;
     }
 
     return new Chart(graphic, {
@@ -174,9 +191,9 @@ function updateAthletesData(country, discipline, year){
                 }
             }else{
                 if(res.length < 20){
-                    spanTitleGraph2[0].textContent = "premiers";
+                    spanTitleGraph2[0].textContent = `${res.length} meilleurs`;
                 }else{
-                    spanTitleGraph2[0].textContent = "20 premiers";
+                    spanTitleGraph2[0].textContent = "20 meilleurs";
                 }
                 noDataAthlete.style.display = "none";
                 athletesChart = updateGraph(res, graphAthlete)
