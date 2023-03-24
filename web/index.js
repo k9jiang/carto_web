@@ -140,7 +140,7 @@ app.get("/athletes", (req, res) => {
   FROM athlete JOIN medal on athlete.id = medal.athlete_id${join_clause} 
   ${where_clause} 
   GROUP BY athlete.name${groupby_clause} 
-  ORDER BY medalcount DESC LIMIT 20`;
+  ORDER BY medalcount DESC`;
 
   console.log(sql_query);
   pool.query(sql_query,[], (err, result) => {
