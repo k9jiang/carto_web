@@ -136,6 +136,7 @@ function updateGraph(result, graphic){
         data: {
             labels: name,
             datasets: [{
+                name: name,
                 label: 'Nombre de médaille remporté',
                 data: medalcount,
                 borderWidth: 1
@@ -146,16 +147,15 @@ function updateGraph(result, graphic){
                 y: {
                     beginAtZero: true
                 }
-            },
-            onClick: (e) => {
-                //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
-                //console.log(this)
-                //updateCountry(this); //insertion du nom du pays
             }
+            /*onClick: (e) => {
+                //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
+                console.log(this);
+                //updateCountry(this); //insertion du nom du pays
+            }*/
         }
     });
 }
-
 
 function updateAthletesData(country, discipline, year){
     fetch(`http://localhost:3000/athletes/?country=${country}&discipline=${discipline}&year=${year}`)
@@ -179,7 +179,7 @@ function updateAthletesData(country, discipline, year){
                     spanTitleGraph2[0].textContent = "20 premiers";
                 }
                 noDataAthlete.style.display = "none";
-                athletesChart = updateGraph(res, graphAthlete)
+                athletesChart = updateGraph(res, graphAthlete);
             }
             //updateGraph(res, graphAthlete)
         })

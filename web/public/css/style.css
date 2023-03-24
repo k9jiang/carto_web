@@ -28,7 +28,6 @@ li, h2{
 
 label, #search-discipline{
     font-size: 13px;
-    font-weight: lighter;
 }
 
 
@@ -103,17 +102,17 @@ header nav ul div{
     width: 920px;
 }
 
-#scroll::-webkit-scrollbar {
+#scroll::-webkit-scrollbar, #listOfYear::-webkit-scrollbar {
     all: unset !important;
 }
 
-#scroll::-webkit-scrollbar-track {
+#scroll::-webkit-scrollbar-track, #listOfYear::-webkit-scrollbar-track {
     background: transparent;
     width: 15px;
 }
 
-#scroll::-webkit-scrollbar-thumb {
-    background-color: #a2a2a2;  
+#scroll::-webkit-scrollbar-thumb, #listOfYear::-webkit-scrollbar-thumb {
+    background-color: #7c7c7c;  
 }
 
 #scroll::-webkit-scrollbar {
@@ -128,12 +127,22 @@ header nav ul div{
     overflow: hidden;
 }
 
+#chooseADiscipline label{
+    font-weight: lighter;
+}
+
+#chooseADiscipline label:hover{
+    text-decoration: underline;
+}
+
 #chooseADiscipline input[type="radio"]{
     display: none;
 }
 
 #chooseADiscipline input[type="radio"]:checked + label{
-    background-color: aqua;
+    background-color: rgb(203, 203, 203);
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 #chooseADiscipline label{
@@ -166,8 +175,8 @@ header nav ul div{
     position: relative;
     appearance: unset;
     border: 1px solid black;
-    width: 22px;
-    height: 20px;
+    width: 25px;
+    height: 23px;
     border-radius: 16px;
 }
 
@@ -184,6 +193,8 @@ header nav ul div{
 
 #chooseAYear #listOfYear{
     vertical-align: top;
+    text-align: center;
+    width: 90px;
 }
 
 
@@ -199,6 +210,7 @@ header nav ul div{
 .statistics{
     position: relative;
     border: 0.5px solid #a2a2a2;
+    height: 295px;
 }
 .statistics .nodata{
     display: none;
@@ -208,6 +220,17 @@ header nav ul div{
     left: 0px;
     right: 0px;
     background-color: #afafaf;
+}
+
+.title{
+}
+
+.graph{
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    height: 200px;
 }
 
 
@@ -306,6 +329,11 @@ header nav ul div{
     
     #chooseAYear div{
         margin-left: 0px;
+    }
+
+    #chooseAYear #listOfYear{
+        width: 60px;
+        float: right;
     }
     
     .map h2{
