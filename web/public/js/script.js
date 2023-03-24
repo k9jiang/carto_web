@@ -233,7 +233,6 @@ function updateGraph(result, graphic) {
     
                 // Substitute the appropriate scale IDs
                 const dataX = chart.scales.x.getValueForPixel(canvasPosition.x);
-                const dataY = chart.scales.y.getValueForPixel(canvasPosition.y);
                 let value = name[dataX];
 
                 if (graphic == graphAthlete) {
