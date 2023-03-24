@@ -29,10 +29,30 @@ let athletesChart = undefined;
 let spanTitleGraph = document.querySelector('.statistics-country .title h2 span');
 let spanTitleGraph2 = document.querySelectorAll('.statistics-athlete .title h2 span');
 let spanTitleNoGraph2 = document.querySelector('.statistics-athlete .nodata h2 span');
+let pct_best_athlete = document.querySelector('.statistics-athlete .percentage');
+let pct_best_country = document.querySelector('.statistics-country .percentage');
+let x_first_athletes = document.querySelector('.statistics-athlete .title .key-figure p span');
+let x_first_countries = document.querySelector('.statistics-country .title .key-figure p span');
 
 //Fonctions
-function updateTitleMap() {
-    if (reqYear == "allYears") {
+function breaking_gap(array){
+    gaps = []
+    for (let i = 0 ; i < array.length -1 ; i++){
+        gaps.push(array[i]-array[i+1]);
+    }
+    console.log(gaps);
+    let avg_gap = (gaps.reduce((accum, b) => accum + b) / gaps.length).toFixed(20);
+    console.log(avg_gap);
+    for (i in gaps) {
+        if (gaps[i] > 2*avg_gap) { //setting a breaking gap if a gap is higher than twice the average gap
+            console.log(i);
+            return i;
+        }
+    }
+    return gaps.length;
+}
+function updateTitleMap(){
+    if(reqYear == "allYears"){
         spanTitleMap.textContent = "de 1886 à 2014"
     } else {
         spanTitleMap.textContent = ` en ${reqYear}`
@@ -45,37 +65,37 @@ function updateTitleMap() {
     }
 }
 
+
 function getRadius(value) { //returns real proportionnal circles according to the represented value
     let v_min = 1;
     let r_min;
-    if ((reqDiscipline != 'discipline' && reqYear != 'allYears')) {
-        r_min = 5
+    if ((reqDiscipline != 'discipline' && reqYear !='allYears')) {
+        r_min = 5;
     }
     else {
-        r_min = 0.75 //setting a tinier min radius if we get all of both disciplines and editions of olympics.
+        r_min = 0.75; //setting a tinier min radius if we get all of both disciplines and editions of olympics.
     }
-    return r_min * Math.sqrt(value / v_min)
+    return r_min * Math.sqrt(value / v_min);
 }
 
-function updateMedals(json_query) {
-    fetch('http://localhost:8080/geoserver/carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=carthageo%3Acentroids&outputFormat=application%2Fjson')
-        .then(result => result.json())
-        .then(function (centroids) {
-            //console.log(centroids.features[0].geometry.coordinates);
-            circles_group.clearLayers() //clears circles features at the beginning of each change
-            for (centroid of centroids.features) {
-                let lnglat = centroid.geometry.coordinates;
-                let latlng = [lnglat[1], lnglat[0]];
-                let medals;
-                for (country of json_query) {
-                    if (country.name == centroid.properties.name) {
-                        medals = country.medalcount
-                        //console.log(medals, country.name, centroid.properties.name);
-                        let circle_prop;
-                        circle_prop = L.circleMarker(latlng, { radius: getRadius(medals), color: '#8C731F', fillColor: '#FFFD00', fillOpacity: 1, country: country.name })
-                            .addTo(circles_group)//adding each circle of each country to the group
 
-                    }
+function updateMedals(json_query){
+    fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
+    .then(result => result.json())
+    .then(function(centroids) {
+        //console.log(centroids.features[0].geometry.coordinates);
+        circles_group.clearLayers() //clears circles features at the beginning of each change
+        for (centroid of centroids.features) {
+            let lnglat = centroid.geometry.coordinates;
+            let latlng = [lnglat[1], lnglat[0]];
+            let medals;
+            for (country of json_query) {
+                if (country.name == centroid.properties.name) {
+                    medals = country.medalcount
+                    //console.log(medals, country.name, centroid.properties.name);
+                    let circle_prop;
+                    circle_prop = L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1, country: country.name})
+                        .addTo(circles_group)//adding each circle of each country to the group
                 }
             }
             //console.log(circles_group);
@@ -98,8 +118,8 @@ function updateGeom(replace = false) {
     } else {
         filter = `&CQL_FILTER=first_participation<=${reqYear}%20AND%20last_participation>=${reqYear}`;
     }
-    const url = "http://localhost:8080/geoserver/carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=carthageo%3Acountry&outputFormat=application%2Fjson"
-        + filter;
+    const url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
+              + filter;
     //Affichage des pays
     fetch(url)
         .then(result => result.json())
@@ -123,6 +143,8 @@ function updateGeom(replace = false) {
 function updateGraph(result, graphic) {
     let name = [];
     let medalcount = [];
+    let total_medals = 0;
+    let medals=[]
 
     for (let i in result) {
         name.push(result[i].name);
@@ -133,12 +155,44 @@ function updateGraph(result, graphic) {
         }
     }
 
+    for (entity of result) {
+        total_medals += parseInt(entity.medalcount);
+        if (entity.medalcount != 0) {
+            medals.push(entity.medalcount);
+        }
+    }
+    break_index = breaking_gap(medals);
+    let gathered_medals = 0;
+    for (i in medals) {
+        gathered_medals += parseInt(medals[i]);
+        if (i == break_index) {
+            break;
+        }
+    }
+    console.log(gathered_medals);
+    console.log(total_medals);
+    let ratio = (gathered_medals*100/total_medals).toFixed(2)
+
+
+    //let ratio = parseFloat(parseInt(medalcount[0])*100/total_medals).toFixed(2);
+    //console.log(ratio);
+
+    if (graphic == graphAthlete) {
+        pct_best_athlete.textContent = ratio+"%";
+        x_first_athletes.textContent = `${break_index+1}`;
+    }
+    else {
+        pct_best_country.textContent = ratio+"%";
+        x_first_countries.textContent = `${break_index+1}`;
+    }
+
     return new Chart(graphic, {
         type: 'bar',
         data: {
             labels: name,
             datasets: [{
-                label: '',
+                name: name,
+                label: 'Nombre de médaille(s) remportée(s)',
                 data: medalcount,
                 barThickness: 8
             }]
@@ -172,12 +226,12 @@ function updateGraph(result, graphic) {
                 legend: {
                     display: false
                 }
-            },
-            onClick: (e) => {
-                //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
-                //console.log(this)
-                //updateCountry(this); //insertion du nom du pays
             }
+            /*onClick: (e) => {
+                //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
+                console.log(this);
+                //updateCountry(this); //insertion du nom du pays
+            }*/
         }
     });
 }
@@ -198,14 +252,14 @@ function updateAthletesData(country, discipline, year) {
                 } else {
                     spanTitleNoGraph2.textContent = reqCountry;
                 }
-            } else {
-                if (res.length < 10) {
-                    spanTitleGraph2[0].textContent = "premiers";
-                } else {
-                    spanTitleGraph2[0].textContent = "10 premiers";
+            }else{
+                if(res.length < 20){
+                    spanTitleGraph2[0].textContent = `${res.length} meilleurs`;
+                }else{
+                    spanTitleGraph2[0].textContent = "20 meilleurs";
                 }
                 noDataAthlete.style.display = "none";
-                athletesChart = updateGraph(res, graphAthlete)
+                athletesChart = updateGraph(res, graphAthlete);
             }
             //updateGraph(res, graphAthlete)
         })
