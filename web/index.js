@@ -40,7 +40,6 @@ app.get("/disciplines", (req, res) => {
     if (err) {
       return console.error(err.message);
     }
-    console.log(result.rows);
     res.json(result.rows);
   })
 })
@@ -92,7 +91,6 @@ app.get("/athletes", (req, res) => {
   let query_parameters = [req.query.country, req.query.discipline, req.query.year];
   let default_parameters = ['allCountries', 'disciplines', 'allYears'];
   let is_default_query = [];
-  console.log(query_parameters, default_parameters);
   for (let i = 0; i < query_parameters.length; i++) {
     if (query_parameters[i] != default_parameters[i]) {
       is_default_query.push(false);
@@ -105,6 +103,8 @@ app.get("/athletes", (req, res) => {
   let where_clause = "";
   let join_clause = "";
   let groupby_clause = "";
+
+  //Construction de la requête selon les paramètres envoyés
   for (let i = 0; i < is_default_query.length; i++) {
     let param = query_parameters[i]
     if (!is_default_query[i]) {
@@ -148,7 +148,6 @@ app.get("/athletes", (req, res) => {
       return console.error(err.message);
     }
     medals_by_athlete = result.rows;
-    console.log(medals_by_athlete);
     res.json(result.rows)
   })
 })

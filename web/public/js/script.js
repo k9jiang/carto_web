@@ -17,13 +17,18 @@ let group;
 let circles_group = L.featureGroup(); //initializing circles group
 
 let filter;
-let map = L.map('map-view').setView([0, 0], 3);
+let map = L.map('map-view').setView([20, 20], 2);
 
 //Graphiques
+let noDataCountries = document.querySelector('.statistics-country .nodata');
+let noDataAthlete = document.querySelector('.statistics-athlete .nodata');
 let graphCountries = document.querySelector('.statistics-country .graph');
 let graphAthlete = document.querySelector('.statistics-athlete .graph');
-let myChart = undefined;
-let spanTitleGraph = document.querySelector('.statistics-athlete h2 span');
+let countriesChart = undefined;
+let athletesChart = undefined;
+let spanTitleGraph = document.querySelector('.statistics-country .title h2 span');
+let spanTitleGraph2 = document.querySelectorAll('.statistics-athlete .title h2 span');
+let spanTitleNoGraph2 = document.querySelector('.statistics-athlete .nodata h2 span');
 
 //Fonctions
 function updateTitleMap(){
@@ -49,7 +54,6 @@ function getRadius(value) { //returns real proportionnal circles according to th
     else {
         r_min = 0.75 //setting a tinier min radius if we get all of both disciplines and editions of olympics.
     }
-    console.log(r_min)
     return r_min * Math.sqrt(value / v_min)
 }
 
@@ -67,18 +71,23 @@ function updateMedals(json_query){
                 if (country.name == centroid.properties.name) {
                     medals = country.medalcount
                     //console.log(medals, country.name, centroid.properties.name);
-                    L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1}).addTo(circles_group); //adding each circle of each country to the group
+                    let circle_prop;
+                    circle_prop = L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1, country: country.name})
+                        .addTo(circles_group)//adding each circle of each country to the group
+                         
                 }
             }
         }
         //console.log(circles_group);
-        circles_group.addTo(map); //displaying features group in the map
+        circles_group
+            .on("click", (e) => {updateCountry(e.layer.options.country)})
+            .addTo(map); //displaying features group in the map
     })}
 
 function updateCountry(countryName){
     reqCountry = countryName;
-    spanTitleGraph.textContent = reqCountry;
-    updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
+    spanTitleGraph2[1].textContent = "de " + reqCountry;
+    updateAthletesData(reqCountry, reqDiscipline, reqYear);
 
 }
 
@@ -101,17 +110,15 @@ function updateGeom(replace = false){
                 updateCountry(layer.feature.properties.name);
                 return reqCountry;
             }).addTo(map);
-            updateData();
+            updateCountryData();
         })
         .catch(function(error) {
             console.error(error);
         });
 }
 
-
 //Affichage des graphiques
-function updateGraphCountries(result){
-    console.log(graphCountries);
+function updateGraph(result, graphic){
     let name = [];
     let medalcount = [];
 
@@ -124,11 +131,7 @@ function updateGraphCountries(result){
         }
     }
 
-    if(myChart){
-        myChart.destroy();
-    }
-
-    myChart = new Chart(graphCountries, {
+    return new Chart(graphic, {
         type: 'bar',
         data: {
             labels: name,
@@ -146,23 +149,44 @@ function updateGraphCountries(result){
             },
             onClick: (e) => {
                 //console.log(myChart.getElementsAtEventForMode(e, 'point', graphCountries.options));
-                console.log(this)
+                //console.log(this)
                 //updateCountry(this); //insertion du nom du pays
             }
         }
     });
 }
 
-function updateGraphAthletes(country, discipline, year){
+
+function updateAthletesData(country, discipline, year){
     fetch(`http://localhost:3000/athletes/?country=${country}&discipline=${discipline}&year=${year}`)
         .then(rep => rep.json())
         .then(res => {
-            console.log(res)
+            if(athletesChart){
+                athletesChart.destroy();
+            }
+
+            if(res.length == 0){
+                noDataAthlete.style.display = "block";
+                if(reqCountry == "allCountries"){
+                    spanTitleNoGraph2.textContent = "monde";
+                }else{
+                    spanTitleNoGraph2.textContent = reqCountry;
+                }
+            }else{
+                if(res.length < 20){
+                    spanTitleGraph2[0].textContent = "premiers";
+                }else{
+                    spanTitleGraph2[0].textContent = "20 premiers";
+                }
+                noDataAthlete.style.display = "none";
+                athletesChart = updateGraph(res, graphAthlete)
+            }
+            //updateGraph(res, graphAthlete)
         })
 }
 
 
-function updateData(){
+function updateCountryData(){
     fetch("http://localhost:3000/data",{
         method : "POST",
         headers: {
@@ -176,7 +200,21 @@ function updateData(){
             //console.log(result);
             updateMedals(result);
             //Mise à jour de la visualistion
-            updateGraphCountries(result);
+            if(countriesChart){
+                countriesChart.destroy();
+            }
+            if(result.length == 0){
+                noDataCountries.style.display = "block";
+            }else{
+                if(result.length < 20){
+                    spanTitleGraph.textContent = "premiers";
+                }else{
+                    spanTitleGraph.textContent = "20 premiers";
+                }
+                noDataCountries.style.display = "none";
+                countriesChart = updateGraph(result, graphCountries)
+            }
+            //updateGraph(result, graphCountries);
         })
 }
 
@@ -184,11 +222,13 @@ function displayDisciplines(text = ""){
 
     formDiscipline.innerHTML = "";
 
-    if(text === "" ){
+    if(text === ""){
+        firstDiscipline.setAttribute("checked", true)
+
         for(let discipline of disciplines){
             let inputDiscipline = `<div>
-            <input type="radio" name="discipline" value="${discipline}">
-            <label for="discipline">${discipline}</label>
+            <input type="radio" name="discipline" id="${discipline}" value="${discipline}">
+            <label for="${discipline}">${discipline}</label>
             </div>`;
             
             formDiscipline.innerHTML += inputDiscipline;
@@ -197,8 +237,8 @@ function displayDisciplines(text = ""){
         for(let discipline of disciplines){
             if(discipline.toLowerCase().includes(text.toLowerCase())){
                 let inputDiscipline = `<div>
-                <input type="radio" name="discipline" value="${discipline}">
-                <label for="discipline">${discipline}</label>
+                <input type="radio" name="discipline" id="${discipline}" value="${discipline}">
+                <label for="${discipline}">${discipline}</label>
             </div>`;
             
             formDiscipline.innerHTML += inputDiscipline;
@@ -214,8 +254,8 @@ firstYear.setAttribute("selected", true)
 //Mise à jour de la carte
 updateTitleMap();
 updateGeom();
-updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
-//updateData();
+updateAthletesData(reqCountry, reqDiscipline, reqYear);
+//updateCountryData();
 
 //Interaction avec les disciplines
 fetch("http://localhost:3000/disciplines")
@@ -228,14 +268,15 @@ fetch("http://localhost:3000/disciplines")
     })
 
 $("#search-discipline").keyup(function(){
+    console.log(this.value);
     displayDisciplines(this.value);
 })
 
 $("#chooseADiscipline").change(function(){
     reqDiscipline = this.discipline.value;
     updateTitleMap();
-    updateData();
-    updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
+    updateCountryData();
+    updateAthletesData(reqCountry, reqDiscipline, reqYear);
 })
 
 //Interaction avec les années
@@ -252,13 +293,13 @@ $("#chooseAYear").change(function(){
 
     updateTitleMap();
     updateGeom(true);
-    updateGraphAthletes(reqCountry, reqDiscipline, reqYear);
+    updateAthletesData(reqCountry, reqDiscipline, reqYear);
 })
 
 //Affichage du fond de carte carte
 L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.{ext}', {
     subdomains: 'abcd',
-    minZoom: 3,
+    minZoom: 2,
     maxZoom: 20,
     ext: 'png',
     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
