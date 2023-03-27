@@ -257,6 +257,32 @@ header nav ul div{
     }
 }
 
+/*légende*/
+.legend {
+    padding: 6px 8px;
+    background-color: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    width: 130px;
+    height: 200px;
+}
+
+.legend svg{
+    margin: auto;
+    width: 100%;
+}
+
+.legend .circle_prop{
+    stroke: #22be85;
+    fill: #61ffb3;
+    fill-opacity : 0.5;
+    stroke-width: 1.5;
+}
+
+.legend .circle_prop:nth-child(1){
+    transform: translateX(50%);
+}
+
 @media (max-width: 1185px) {
     .container{
         flex-direction: column;
