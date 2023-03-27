@@ -15,6 +15,7 @@ let reqCountry = "allCountries";
 
 let group;
 let circles_group = L.featureGroup(); //initializing circles group
+let circles_group_legend = L.featureGroup(); //initializing circles group
 
 let filter;
 let map = L.map('map-view').setView([20, 20], 2);
@@ -40,12 +41,9 @@ function breaking_gap(array){
     for (let i = 0 ; i < array.length -1 ; i++){
         gaps.push(array[i]-array[i+1]);
     }
-    console.log(gaps);
     let avg_gap = (gaps.reduce((accum, b) => accum + b) / gaps.length).toFixed(20);
-    console.log(avg_gap);
     for (i in gaps) {
         if (gaps[i] > 2*avg_gap) { //setting a breaking gap if a gap is higher than twice the average gap
-            console.log(i);
             return i;
         }
     }
@@ -92,23 +90,51 @@ function updateMedals(json_query){
             for (country of json_query) {
                 if (country.name == centroid.properties.name) {
                     medals = country.medalcount
-                    //console.log(medals, country.name, centroid.properties.name);
                     let circle_prop;
-                    circle_prop = L.circleMarker(latlng, {radius : getRadius(medals), color : '#8C731F', fillColor : '#FFFD00',fillOpacity : 1, country: country.name})
+                    circle_prop = L.circleMarker(latlng, {radius : getRadius(medals), color : '#22be85', fillColor : '#61ffb3', fillOpacity : 0.5, weight: 1.5, country: country.name})
                         .addTo(circles_group)//adding each circle of each country to the group
                 }
             }
-            //console.log(circles_group);
-            circles_group
-                .on("click", (e) => { updateCountry(e.layer.options.country) })
-                .addTo(map); //displaying features group in the map
         }
+        circles_group
+            .on("click", (e) => { 
+                L.DomEvent.stopPropagation(e);
+                updateCountry(e.layer.options.country); 
+            })
+            .addTo(map); //displaying features group in the map
+
+        //Création légende
+        let legend = L.control({position: 'bottomright'});
+
+        legend.onAdd = function (map) {
+            let div = L.DomUtil.create('div', 'legend');
+            
+            legend_grade = [5238, 4000, 2000 ,1000, 1];
+
+            svgContent = "<svg>";
+            for(let grade of legend_grade){
+                let radius = getRadius(grade)
+                svgContent += `<circle class="circle_prop" cx="${radius}" cy="${radius}" r="${radius}"/>`;
+            }
+            svgContent += "</svg>";
+            div.innerHTML = svgContent;
+
+            return div;
+        };
+        
+        
+        legend.addTo(map);
     })
 }
 
-function updateCountry(countryName) {
+function updateCountry(countryName = "allCountries") {
     reqCountry = countryName;
-    spanTitleGraph2[1].textContent = "de " + reqCountry;
+    if(countryName == "allCountries"){
+        spanTitleGraph2[1].textContent = "";
+    }else{
+        spanTitleGraph2[1].textContent = "de " + reqCountry;
+    }
+    console.log(reqCountry);
     updateAthletesData(reqCountry, reqDiscipline, reqYear);
 
 }
@@ -125,11 +151,19 @@ function updateGeom(replace = false) {
     fetch(url)
         .then(result => result.json())
         .then(result => {
-            console.log(result);
             if (replace) {
                 group.clearLayers();
             }
-            group = L.geoJSON(result).bindPopup(function (layer) {
+            group = L.geoJSON(result, {
+                style : () => {
+                    return {
+                        weight: 1,
+                        fillColor: "#a59af5",
+                        fillOpacity: 1,
+                        color: "#000"
+                    }
+                }
+            }).bindPopup(function (layer) {
                 updateCountry(layer.feature.properties.name);
                 return reqCountry;
             }).addTo(map);
@@ -156,13 +190,20 @@ function updateGraph(result, graphic) {
         }
     }
 
+    //Somme des médailles
     for (entity of result) {
         total_medals += parseInt(entity.medalcount);
         if (entity.medalcount != 0) {
             medals.push(entity.medalcount);
         }
     }
-    break_index = parseInt(breaking_gap(medals));
+
+    //Casser l'ordre des médaillées
+    if(medals.length == 1){
+        break_index = 0;
+    }else{
+        break_index = parseInt(breaking_gap(medals));
+    }
     let gathered_medals = 0;
     for (i in medals) {
         gathered_medals += parseInt(medals[i]);
@@ -170,9 +211,8 @@ function updateGraph(result, graphic) {
             break;
         }
     }
-    console.log(gathered_medals);
-    console.log(total_medals);
     let ratio = (gathered_medals*100/total_medals).toFixed(2)
+    
 
 
     //let ratio = parseFloat(parseInt(medalcount[0])*100/total_medals).toFixed(2);
@@ -247,9 +287,10 @@ function updateGraph(result, graphic) {
                 let value = name[dataX];
 
                 if (graphic == graphAthlete) {
+
                 }
                 else {
-                    updateCountry(value)
+                    updateCountry(value);
                 }
             }
         }
@@ -275,10 +316,10 @@ function updateAthletesData(country, discipline, year) {
                     spanTitleNoGraph2.textContent = reqCountry;
                 }
             }else{
-                if(res.length < 20){
+                if(res.length < 10){
                     spanTitleGraph2[0].textContent = `${res.length} meilleurs`;
                 }else{
-                    spanTitleGraph2[0].textContent = "20 meilleurs";
+                    spanTitleGraph2[0].textContent = "10 meilleurs";
                 }
                 noDataAthlete.style.display = "none";
                 athletesChart = updateGraph(res, graphAthlete);
@@ -356,7 +397,7 @@ firstYear.setAttribute("selected", true)
 //Mise à jour de la carte
 updateTitleMap();
 updateGeom();
-updateAthletesData(reqCountry, reqDiscipline, reqYear);
+updateCountry();
 //updateCountryData();
 
 //Interaction avec les disciplines
@@ -370,7 +411,6 @@ fetch("http://localhost:3000/disciplines")
     })
 
 $("#search-discipline").keyup(function () {
-    console.log(this.value);
     displayDisciplines(this.value);
 })
 
@@ -407,4 +447,8 @@ L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/
     attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
+//Afficher les athlètes pour tous les pays
+map.on("click", () => {
+    updateCountry();
+})
 //Intéraction avec la carte
