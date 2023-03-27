@@ -370,9 +370,9 @@ function updateCountryData() {
                 noDataCountries.style.display = "block";
             } else {
                 if (result.length < 10) {
-                    spanTitleGraph.textContent = "premiers";
+                    spanTitleGraph.textContent = "";
                 } else {
-                    spanTitleGraph.textContent = "10 premiers";
+                    spanTitleGraph.textContent = "10";
                 }
                 noDataCountries.style.display = "none";
                 countriesChart = updateGraph(result, graphCountries)
