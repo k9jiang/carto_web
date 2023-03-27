@@ -15,7 +15,7 @@ let reqCountry = "allCountries";
 
 let group;
 let circles_group = L.featureGroup(); //initializing circles group
-let circles_group_legend = L.featureGroup(); //initializing circles group
+let legend = undefined;
 
 let filter;
 let map = L.map('map-view').setView([20, 20], 2);
@@ -35,6 +35,13 @@ let pct_best_country = document.querySelector('.statistics-country .percentage')
 let x_first_athletes = document.querySelector('.statistics-athlete .title .key-figure p');
 let x_first_countries = document.querySelector('.statistics-country .title .key-figure p');
 
+let geom_style = {
+    weight: 1,
+    fillColor: "#a59af5",
+    fillOpacity: 1,
+    color: "#000"
+}
+
 //Fonctions
 function breaking_gap(array){
     gaps = []
@@ -49,6 +56,7 @@ function breaking_gap(array){
     }
     return gaps.length;
 }
+
 function updateTitleMap(){
     if(reqYear == "allYears"){
         spanTitleMap.textContent = "de 1886 à 2014"
@@ -67,8 +75,8 @@ function updateTitleMap(){
 function getRadius(value) { //returns real proportionnal circles according to the represented value
     let v_min = 1;
     let r_min;
-    if ((reqDiscipline != 'discipline' && reqYear !='allYears')) {
-        r_min = 5;
+    if (reqYear !='allYears') {
+        r_min = 3;
     }
     else {
         r_min = 0.75; //setting a tinier min radius if we get all of both disciplines and editions of olympics.
@@ -76,6 +84,48 @@ function getRadius(value) { //returns real proportionnal circles according to th
     return r_min * Math.sqrt(value / v_min);
 }
 
+function updateLegend(){
+
+    if(legend){
+        map.removeControl(legend);
+    }
+    //Création légende
+    legend = L.control({position: 'bottomleft'});
+
+    legend.onAdd = function (map) {
+        let div = L.DomUtil.create('div', 'legend');
+
+        if ((reqDiscipline == 'disciplines' && reqYear =='allYears')) {
+            legend_grade = [5238, 4000, 2000 ,1000, 10];
+        }
+        else {
+            legend_grade = [250, 200, 100 ,50, 10];
+        }
+        
+
+        svgContent = "<svg>";
+        svgContent += `<text class="title_prop" y="11">Nombre de médailles</text>`;
+        for(let grade of legend_grade){
+            let radius = getRadius(grade);
+            svgContent += `<circle class="circle_prop" cx="60" cy="${140 - radius}" r="${radius}"/>`;
+            svgContent += `<line class="line_prop" x1="60" y1="${140 - radius*2}" x2="120" y2="${140 - radius*2}" />`;
+            svgContent += `<text class="text_prop" x="120" y="${140 - radius*2}">${grade}</text>`;
+        }
+        
+        svgContent += `<rect width="30" height="15" y="155" style="fill:${geom_style.fillColor};
+        stroke-width:${geom_style.weight};
+        stroke:${geom_style.color}" />`;
+        
+        svgContent += `<text class="text_prop" y="165" x="40">Pays participants</text>`;
+
+        svgContent += "</svg>";
+        div.innerHTML = svgContent;
+
+        return div;
+    };
+
+    map.addControl(legend);
+}
 
 function updateMedals(json_query){
     fetch('http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
@@ -101,29 +151,7 @@ function updateMedals(json_query){
                 L.DomEvent.stopPropagation(e);
                 updateCountry(e.layer.options.country); 
             })
-            .addTo(map); //displaying features group in the map
-
-        //Création légende
-        let legend = L.control({position: 'bottomright'});
-
-        legend.onAdd = function (map) {
-            let div = L.DomUtil.create('div', 'legend');
-            
-            legend_grade = [5238, 4000, 2000 ,1000, 1];
-
-            svgContent = "<svg>";
-            for(let grade of legend_grade){
-                let radius = getRadius(grade)
-                svgContent += `<circle class="circle_prop" cx="${radius}" cy="${radius}" r="${radius}"/>`;
-            }
-            svgContent += "</svg>";
-            div.innerHTML = svgContent;
-
-            return div;
-        };
-        
-        
-        legend.addTo(map);
+            .addTo(map); //displaying features group in the map        
     })
 }
 
@@ -156,12 +184,7 @@ function updateGeom(replace = false) {
             }
             group = L.geoJSON(result, {
                 style : () => {
-                    return {
-                        weight: 1,
-                        fillColor: "#a59af5",
-                        fillOpacity: 1,
-                        color: "#000"
-                    }
+                    return geom_style;
                 }
             }).bindPopup(function (layer) {
                 updateCountry(layer.feature.properties.name);
@@ -174,7 +197,6 @@ function updateGeom(replace = false) {
         });
 }
 
-//Affichage des graphiques
 function updateGraph(result, graphic) {
     let name = [];
     let medalcount = [];
@@ -299,7 +321,6 @@ function updateGraph(result, graphic) {
     return chart;
 }
 
-
 function updateAthletesData(country, discipline, year) {
     fetch(`http://localhost:3000/athletes/?country=${country}&discipline=${discipline}&year=${year}`)
         .then(rep => rep.json())
@@ -327,7 +348,6 @@ function updateAthletesData(country, discipline, year) {
             //updateGraph(res, graphAthlete)
         })
 }
-
 
 function updateCountryData() {
     fetch("http://localhost:3000/data", {
@@ -398,7 +418,7 @@ firstYear.setAttribute("selected", true)
 updateTitleMap();
 updateGeom();
 updateCountry();
-//updateCountryData();
+updateLegend()
 
 //Interaction avec les disciplines
 fetch("http://localhost:3000/disciplines")
@@ -419,6 +439,7 @@ $("#chooseADiscipline").change(function () {
     updateTitleMap();
     updateCountryData();
     updateAthletesData(reqCountry, reqDiscipline, reqYear);
+    updateLegend()
 })
 
 //Interaction avec les années
@@ -436,6 +457,7 @@ $("#chooseAYear").change(function () {
     updateTitleMap();
     updateGeom(true);
     updateAthletesData(reqCountry, reqDiscipline, reqYear);
+    updateLegend()
 })
 
 //Affichage du fond de carte carte
