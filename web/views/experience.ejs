@@ -1,5 +1,40 @@
 <%- include("_header") -%>
 
+<section class="part-one">
+    <form id="chooseAnAthlete">
+        <h2>Rechercher un athlète</h2>
+        <input type="text" id="search-athlete" placeholder="Entrer le nom d'un athlète">
+        <fieldset id="scroll">
+        </fieldset>
+    </form>
+</section>
+<section class="part-two">
+    <div class="map">
+        <h2>Ville où <span></span> a participé</h2>
+        <div id="map-view"></div>
+    </div>
+</section>
+<section class="part-three">
+    <div id="description">
+        <div id="genre">
+            <p>Genre :<span></span><span></span></p>
+        </div>
+        <div id="victory">
+            <p>Part d'épreuve remportée : <span></span></p>
+        </div>
+        <div id="country">
+            <p>Pays : <span></span></p>
+        </div>
+        <div id="disciplines_spec">
+            <p>Disciplines : <span></span></p>
+        </div>
+        <div id="medals_gain">
+            <i class="fas fa-medal"></i><span>0</span>
+            <i class="fas fa-medal"></i><span>0</span>
+            <i class="fas fa-medal"></i><span>0</span>
+        </div>
+    </div>
+</section>
 
 <%- include("_footer") -%>
 
