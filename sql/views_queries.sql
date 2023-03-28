@@ -196,3 +196,16 @@ SELECT athlete.name,
 FROM athlete JOIN medal ON athlete.id = medal.athlete_id
 GROUP by athlete.name
 ORDER BY medalcount DESC LIMIT 20;
+
+SELECT athlete.name, count(medal.medal) as medalcount, country.name, olympiad.year
+FROM athlete JOIN medal ON athlete.id = medal.athlete_id
+JOIN country on athlete.country_id = country.id
+JOIN olympiad on medal.olympiad_id = olympiad.id
+WHERE athlete.name ilike 'APANASSENKO, Dmitri'
+GROUP BY athlete.name, country.name, olympiad.year;
+
+--selects all the athletes that have been part of olympics under two different flags
+with athlete1 as (select * from athlete)
+select athlete1.*, athlete.country_id as country2
+from athlete1, athlete where athlete1.name = athlete.name
+                         and athlete1.country_id != athlete.country_id;

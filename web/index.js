@@ -14,9 +14,18 @@ const pool = new Pool({ //Identifiants de connexion, ne jamais l'afficher en dur
     database: process.env.DB_DATABASE_NAME,
     password: process.env.DB_PASS,
     port: process.env.DB_PORT
-})// mes identifiants à moi, changer dans votre version si vous voulez tester
+})
 
 console.log("Connexion réussie à la base de donnée")
+
+//functions
+function checks_replaces_if_apostrophe(str){
+  let str_replaced = str
+  if (str.includes("'")) {
+    str_replaced = str.replace("'", "''");
+  }
+  return str_replaced
+}
 
 //Où trouver les fichiers statiques si le chemin n'existe pas
 
@@ -55,7 +64,14 @@ app.get("/", (req, res) => {
 })
 
 app.get("/experience", (req, res) => {
-  res.render("experience");
+  const query_names = "SELECT DISTINCT name from athlete ORDER BY name ASC";
+  pool.query(query_names, [], (err, result2) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log(result2.rows);
+    res.render("experience", {names : result2.rows});
+  })
 })
 
 app.post("/data", (req, res) => {
@@ -108,14 +124,12 @@ app.get("/athletes", (req, res) => {
   let join_clause = "";
   let groupby_clause = "";
 
-  //building request according to sent parameters
+  //building query according to sent parameters
   for (let i = 0; i < is_default_query.length; i++) {
     let param = query_parameters[i]
     if (!is_default_query[i]) {
       if (i==0){
-        if (param == "Cote d'Ivoire") {
-          param = "Cote d''Ivoire"
-        } //handling "Cote d'Ivoire" exception that generate issue because of the "'" in the sql query
+        param = checks_replaces_if_apostrophe(param) //handling "Cote d'Ivoire" exception that generate issue because of the "'" in the sql query
         select_clause += ", country.name AS nationality";
         groupby_clause += ", nationality";
         join_clause +=" JOIN country ON athlete.country_id = country.id";
@@ -154,7 +168,24 @@ app.get("/athletes", (req, res) => {
     if (err) {
       return console.error(err.message);
     }
-    medals_by_athlete = result.rows;
     res.json(result.rows)
   })
 })
+
+app.get("/experience/:name", (req, res) => {
+  let name = req.params.name;
+  name = checks_replaces_if_apostrophe(name);
+  const sql = `SELECT athlete.name, count(medal.medal) as medalcount, country.name, olympiad.year 
+  FROM athlete JOIN medal ON athlete.id = medal.athlete_id
+  JOIN country on athlete.country_id = country.id
+  JOIN olympiad on medal.olympiad_id = olympiad.id
+  WHERE athlete.name ilike '${name}'
+  GROUP BY athlete.name, country.name, olympiad.year`;
+  pool.query(sql, [], (err, result) => {
+     if (err) {
+      return console.error(err.message);
+    }
+    console.log(result.rows);
+    res.json(result.rows);
+  });
+});
