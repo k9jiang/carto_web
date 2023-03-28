@@ -3,6 +3,8 @@ let scrollAthlete = document.getElementById("scroll");
 let formAthlete = document.getElementById("chooseAnAthlete");
 let reqAthlete = "";
 
+let map = L.map('map-view').setView([20, 20], 2);
+
 //Paramètre de l'url
 const currentUrl = new URL(window.location.href);
 //currentUrl.searchParams.get("name")
@@ -65,12 +67,16 @@ function reName(str){
     return [first_str, str_split[1]].join(" ")
 }
 
-function updateDescription(){
-    fetch("http://localhost:3000/names/:name")
-    .then(rep => rep.json())
-    .then(res => { 
-        
-    })
+function updateDescription(result){
+    if(result.gender == "Women"){
+        $("#genre span").text("♀ Femme");
+    }else{
+        $("#genre span").text("♂ Homme");
+    }
+
+    $("#country span").text(result.name);
+    $("#discipline span").text(result.discipline);
+    $("#medals_gain p span").text(result.medalcount);
 }
 
 fetch("http://localhost:3000/names")
@@ -92,9 +98,25 @@ formAthlete.addEventListener("submit", function(e) {
     displayAthletes(this.character.value);
 })
 
-$("#chooseAnAthlete").change(function () {
-    reqAthlete = this.athlete.id;
+$("#chooseAnAthlete").change(function (e) {
+    reqAthlete = e.target.id;
     updateTitles(this.athlete.value);
+
+    fetch("http://localhost:3000/experience/" + reqAthlete)
+    .then(rep => rep.json())
+    .then(res => { 
+        console.log(res[0]);
+        updateDescription(res[0]);
+    })
+    
     //updateMap();
-    //updateDescription();
 })
+
+//Affichage du fond de carte carte
+L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.{ext}', {
+    subdomains: 'abcd',
+    minZoom: 2,
+    maxZoom: 20,
+    ext: 'png',
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
