@@ -64,13 +64,17 @@ app.get("/", (req, res) => {
 })
 
 app.get("/experience", (req, res) => {
+    res.render("experience");
+})
+
+app.get("/names", (req, res) => {
   const query_names = "SELECT DISTINCT name from athlete ORDER BY name ASC";
   pool.query(query_names, [], (err, result2) => {
     if (err) {
       return console.error(err.message);
     }
     console.log(result2.rows);
-    res.render("experience", {names : result2.rows});
+    res.json(result2.rows);
   })
 })
 
