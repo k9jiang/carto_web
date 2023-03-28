@@ -52,7 +52,7 @@ header img{
     width: 125px;
 }
 
-header nav{
+header nav, footer{
     background-color: #000;
     color: #FFF;
 }

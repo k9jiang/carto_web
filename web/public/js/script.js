@@ -59,9 +59,9 @@ function breaking_gap(array){
 
 function updateTitleMap(){
     if(reqYear == "allYears"){
-        spanTitleMap.textContent = "de 1886 à 2014"
+        spanTitleMap.textContent = "de 1886 à 2014";
     } else {
-        spanTitleMap.textContent = ` en ${reqYear}`
+        spanTitleMap.textContent = ` en ${reqYear}`;
     }
 
     if (reqDiscipline == "disciplines") {
@@ -75,7 +75,7 @@ function updateTitleMap(){
 function getRadius(value) { //returns real proportionnal circles according to the represented value
     let v_min = 1;
     let r_min;
-    if (reqYear !='allYears') {
+    if (reqYear !='allYears' || reqDiscipline !='disciplines') {
         r_min = 3;
     }
     else {
@@ -96,10 +96,10 @@ function updateLegend(){
         let div = L.DomUtil.create('div', 'legend');
 
         if ((reqDiscipline == 'disciplines' && reqYear =='allYears')) {
-            legend_grade = [5238, 4000, 2000 ,1000, 10];
+            legend_grade = [5238, 4000, 2000 ,500, 10];
         }
         else {
-            legend_grade = [250, 200, 100 ,50, 10];
+            legend_grade = [250, 200, 120 ,40, 5];
         }
         
 
@@ -439,7 +439,7 @@ $("#chooseADiscipline").change(function () {
     updateTitleMap();
     updateCountryData();
     updateAthletesData(reqCountry, reqDiscipline, reqYear);
-    updateLegend()
+    updateLegend();
 })
 
 //Interaction avec les années
@@ -457,7 +457,7 @@ $("#chooseAYear").change(function () {
     updateTitleMap();
     updateGeom(true);
     updateAthletesData(reqCountry, reqDiscipline, reqYear);
-    updateLegend()
+    updateLegend();
 })
 
 //Affichage du fond de carte carte
