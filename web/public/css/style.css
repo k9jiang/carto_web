@@ -95,11 +95,14 @@ header nav ul div{
     justify-content: center;
 }
 
+fieldset{
+    border: none;
+}
+
 #scroll{
     height: 400px;
     margin: 0px;
     padding: 0px;
-    border: none;
     overflow-y: scroll;
 }
 
@@ -244,6 +247,19 @@ header nav ul div{
     left: 2px;
     right: 2px;
     height: 200px;
+}
+
+/* Fiche description */
+
+#description {
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 2px 2px 4px black;
+    width: 200px;
+}
+
+#description p{
+    font-weight: bold;
 }
 
 

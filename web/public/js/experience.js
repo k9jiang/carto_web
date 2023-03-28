@@ -1,5 +1,6 @@
 let athletes = [];
-let formAthlete = document.getElementById("scroll");
+let scrollAthlete = document.getElementById("scroll");
+let formAthlete = document.getElementById("chooseAnAthlete");
 let reqAthlete = "";
 
 //Paramètre de l'url
@@ -13,35 +14,38 @@ let descriptionTitle = document.querySelector(".part-three h2")
 
 function displayAthletes(text = "") {
 
-    formAthlete.innerHTML = "";
     console.log(text);
+
+    scrollAthlete.innerHTML = "";
 
     if (text === "") {
         for (let athlete of athletes) {
+            let reNameAthlete = reName(athlete.name);
             let inputAthlete = `<div>
-            <input type="radio" name="athlete" id="${athlete.name}" value="${athlete.name}">
-            <label for="${athlete.name}">${athlete.name}</label>
+            <input type="radio" name="athlete" id="${athlete.name}" value="${reNameAthlete}">
+            <label for="${athlete.name}">${reNameAthlete}</label>
             </div>`;
 
-            formAthlete.innerHTML += inputAthlete;
+            scrollAthlete.innerHTML += inputAthlete;
         }
     }else {
         for (let athlete of athletes) {
+            let reNameAthlete = reName(athlete.name);
             if (athlete.name.toLowerCase().includes(text.toLowerCase())) {
                 let inputAthlete = `<div>
-                <input type="radio" name="athlete" id="${athlete.name}" value="${athlete.name}">
-                <label for="${athlete.name}">${athlete.name}</label>
+                <input type="radio" name="athlete" id="${athlete.name}" value="${reNameAthlete}">
+                <label for="${athlete.name}">${reNameAthlete}</label>
             </div>`;
 
-                formAthlete.innerHTML += inputAthlete;
+                scrollAthlete.innerHTML += inputAthlete;
             }
         }
     }
 }
 
-function updateTitles(){
-    mapTitle.textContent = `Ville où ${reqAthlete} a participé`;
-    descriptionTitle.textContent = reqAthlete;
+function updateTitles(title){
+    mapTitle.textContent = `Ville où ${title} a participé`;
+    descriptionTitle.textContent = title;
 }
 
 function checks_replaces_if_apostrophe(str){
@@ -57,8 +61,6 @@ function reName(str){
     let first_str = str_split[0].toLowerCase();
     let first_letter = first_str.charAt(0).toUpperCase();
     first_str = first_letter + first_str.slice(1)
-
-    console.log(first_str)
 
     return [first_str, str_split[1]].join(" ")
 }
@@ -85,13 +87,14 @@ fetch("http://localhost:3000/names")
 
 })
 
-$("#search-athlete").keyup(function () {
-    const reqAwait = setTimeout(() => displayAthletes(this.value), 1000);
+formAthlete.addEventListener("submit", function(e) {
+    e.preventDefault();
+    displayAthletes(this.character.value);
 })
 
 $("#chooseAnAthlete").change(function () {
-    reqAthlete = reName(this.athlete.value);
-    updateTitles();
+    reqAthlete = this.athlete.id;
+    updateTitles(this.athlete.value);
     //updateMap();
     //updateDescription();
 })
