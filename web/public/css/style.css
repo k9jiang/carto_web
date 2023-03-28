@@ -285,15 +285,15 @@ fieldset{
     font-size: 25px;
 }
 
-#medals_gain div:nth-child(1) i{
+#medals_gain div.gold i{
     color: yellow;
 }
 
-#medals_gain div:nth-child(2) i{
+#medals_gain div.silver i{
     color: grey;
 }
 
-#medals_gain div:nth-child(3) i{
+#medals_gain div.bronze i{
     color: brown;
 }
 
