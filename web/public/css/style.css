@@ -262,6 +262,40 @@ fieldset{
     font-weight: bold;
 }
 
+#description span{
+    color: gray;
+}
+
+#medals_gain{  
+    position: relative;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#medals_gain p{  
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    margin: 0px;
+}
+
+#medals_gain div i{
+    font-size: 25px;
+}
+
+#medals_gain div:nth-child(1) i{
+    color: yellow;
+}
+
+#medals_gain div:nth-child(2) i{
+    color: grey;
+}
+
+#medals_gain div:nth-child(3) i{
+    color: brown;
+}
 
 @media (max-width: 1515px) {
     .container{
