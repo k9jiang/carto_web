@@ -47,3 +47,14 @@ fetch("http://localhost:3000/athletes/?country=allCountries&discipline=disciplin
 $("#search-athlete").keyup(function () {
     const reqAwait = setTimeout(() => displayAthletes(this.value), 1500);
 })
+
+function checks_replaces_if_apostrophe(str){
+    let str_replaced = str
+    if (str.includes("'")) {
+      str_replaced = str.replace("'", "''");
+    }
+    return str_replaced
+  }
+
+console.log(checks_replaces_if_apostrophe("j'ai ri"));
+console.log(checks_replaces_if_apostrophe("bonjour"));
