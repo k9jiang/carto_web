@@ -129,29 +129,29 @@ header nav ul div{
     width: 234px;
 }
 
-#chooseADiscipline div{
+.part-one form div{
     overflow: hidden;
 }
 
-#chooseADiscipline label{
+.part-one form label{
     font-weight: lighter;
 }
 
-#chooseADiscipline label:hover{
+.part-one form label:hover{
     text-decoration: underline;
 }
 
-#chooseADiscipline input[type="radio"]{
+.part-one form input[type="radio"]{
     display: none;
 }
 
-#chooseADiscipline input[type="radio"]:checked + label{
+.part-one form input[type="radio"]:checked + label{
     background-color: rgb(203, 203, 203);
     font-weight: bold;
     text-decoration: underline;
 }
 
-#chooseADiscipline label{
+.part-one form label{
     cursor: pointer;
     display: inline-block;
     width: 100%;
