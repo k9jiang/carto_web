@@ -108,14 +108,14 @@ app.get("/athletes", (req, res) => {
   let join_clause = "";
   let groupby_clause = "";
 
-  //Construction de la requête selon les paramètres envoyés
+  //building request according to sent parameters
   for (let i = 0; i < is_default_query.length; i++) {
     let param = query_parameters[i]
     if (!is_default_query[i]) {
       if (i==0){
         if (param == "Cote d'Ivoire") {
           param = "Cote d''Ivoire"
-        }
+        } //handling "Cote d'Ivoire" exception that generate issue because of the "'" in the sql query
         select_clause += ", country.name AS nationality";
         groupby_clause += ", nationality";
         join_clause +=" JOIN country ON athlete.country_id = country.id";
