@@ -54,6 +54,10 @@ app.get("/", (req, res) => {
   })
 })
 
+app.get("/experience", (req, res) => {
+  res.render("experience");
+})
+
 app.post("/data", (req, res) => {
   //console.log(req.body);
   let query_parameters;
