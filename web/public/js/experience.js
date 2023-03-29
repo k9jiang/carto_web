@@ -68,15 +68,33 @@ function reName(str){
 }
 
 function updateDescription(result){
-    if(result.gender == "Women"){
+    first_res = result[0];
+    gold_medals = 0;
+    silver_medals = 0;
+    bronze_medals = 0;
+
+    if(first_res.gender == "Women"){
         $("#genre span").text("♀ Femme");
     }else{
         $("#genre span").text("♂ Homme");
     }
 
-    $("#country span").text(result.name);
-    $("#discipline span").text(result.discipline);
-    $("#medals_gain p span").text(result.medalcount);
+    $("#country span").text(first_res.name);
+    $("#discipline span").text(first_res.discipline);
+    
+    for (let res of result){
+        if(res.medal == "Gold"){
+            gold_medals += parseInt(res.medalcount)
+        }else if(res.medal == "Silver"){
+            silver_medals += parseInt(res.medalcount)
+        }else{
+            bronze_medals += parseInt(res.medalcount) 
+        }
+    }
+    $("#medals_gain div.gold span").text(gold_medals);
+    $("#medals_gain div.silver span").text(silver_medals);
+    $("#medals_gain div.bronze span").text(bronze_medals);
+    $("#medals_gain p span").text(bronze_medals + silver_medals + gold_medals);
 }
 
 fetch("http://localhost:3000/names")
@@ -113,8 +131,8 @@ $("#chooseAnAthlete").change(function (e) {
     fetch("http://localhost:3000/experience/" + reqAthlete)
     .then(rep => rep.json())
     .then(res => { 
-        //console.log(res[0]);
-        updateDescription(res[0]);
+        console.log(res);
+        updateDescription(res);
     })
     
     //updateMap();

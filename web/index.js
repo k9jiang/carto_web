@@ -179,17 +179,17 @@ app.get("/athletes", (req, res) => {
 app.get("/experience/:name", (req, res) => {
   let name = req.params.name;
   name = checks_replaces_if_apostrophe(name);
-  const sql = `SELECT athlete.name, athlete.gender, medal.medal, count(medal.medal) as medalcount, country.name, olympiad.year 
+  const sql = `SELECT athlete.name, olympic_cities.id as city_id, athlete.gender, medal.medal, count(medal.medal) as medalcount, country.name 
   FROM athlete JOIN medal ON athlete.id = medal.athlete_id
   JOIN country on athlete.country_id = country.id
   JOIN olympiad on medal.olympiad_id = olympiad.id
+  JOIN olympic_cities on olympiad.city_id = olympic_cities.id
   WHERE athlete.name ilike '${name}'
-  GROUP BY athlete.name, country.name, olympiad.year, athlete.gender, medal.medal`;
+  GROUP BY athlete.name, country.name, athlete.gender, medal.medal, olympic_cities.id`;
   pool.query(sql, [], (err, result) => {
      if (err) {
       return console.error(err.message);
     }
-    //console.log(result.rows);
     res.json(result.rows);
   });
 });
