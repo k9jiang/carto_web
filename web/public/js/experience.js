@@ -3,6 +3,8 @@ let scrollAthlete = document.getElementById("scroll");
 let formAthlete = document.getElementById("chooseAnAthlete");
 let reqAthlete = "";
 
+let map = L.map('map-view').setView([20, 20], 2);
+
 //Paramètre de l'url
 const currentUrl = new URL(window.location.href);
 //currentUrl.searchParams.get("name")
@@ -11,10 +13,18 @@ const currentUrl = new URL(window.location.href);
 let mapTitle = document.querySelector(".part-two h2")
 let descriptionTitle = document.querySelector(".part-three h2")
 
+let geom_style = {
+    weight: 1,
+    fillColor: "#a59af5",
+    fillOpacity: 1,
+    color: "#000"
+}
+
+let cities_group = L.featureGroup();
+let lines_group = L.featureGroup();
+
 
 function displayAthletes(text = "") {
-
-    console.log(text);
 
     scrollAthlete.innerHTML = "";
 
@@ -65,12 +75,78 @@ function reName(str){
     return [first_str, str_split[1]].join(" ")
 }
 
-function updateDescription(){
-    fetch("http://localhost:3000/names/:name")
-    .then(rep => rep.json())
-    .then(res => { 
-        
-    })
+function updateDescription(result){
+    first_res = result[0];
+    gold_medals = 0;
+    silver_medals = 0;
+    bronze_medals = 0;
+
+    if(first_res.gender == "Women"){
+        $("#genre span").text("♀ Femme");
+    }else{
+        $("#genre span").text("♂ Homme");
+    }
+
+    $("#country span").text(first_res.name);
+    $("#discipline span").text(first_res.discipline);
+    
+    for (let res of result){
+        if(res.medal == "Gold"){
+            gold_medals += parseInt(res.medalcount)
+        }else if(res.medal == "Silver"){
+            silver_medals += parseInt(res.medalcount)
+        }else{
+            bronze_medals += parseInt(res.medalcount) 
+        }
+    }
+    $("#medals_gain div.gold span").text(gold_medals);
+    $("#medals_gain div.silver span").text(silver_medals);
+    $("#medals_gain div.bronze span").text(bronze_medals);
+    $("#medals_gain p span").text(bronze_medals + silver_medals + gold_medals);
+}
+
+function sortAsc(a, b) {
+    return a.position > b.position;
+  }
+
+function updateMap(result){
+
+    let url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Carthageo%3Aolympic_cities&outputFormat=application%2Fjson";
+
+    fetch(url)
+        .then(rep => rep.json())
+        .then(res => { 
+            cities_group.clearLayers();
+            lines_group.clearLayers();
+
+            let latlngs = [];
+            let latlng = [];
+
+            let features = res.features;
+
+            for (elmt of result) {
+                for (city of features) {
+                    if (elmt.city_id == city.id.replace("olympic_cities.", "")) {
+                        let coords = city.geometry.coordinates;
+                        latlngs.push([coords[1], coords[0]]);
+                        L.marker([coords[1], coords[0]], {year: elmt.year}).addTo(cities_group);
+                    }
+                }
+            }
+
+            for(let coord of latlngs){
+
+                latlng.push(coord);
+                if(latlng.length >= 2){
+                    L.polyline(latlng, {color: 'red'}).addTo(lines_group);
+                    latlng.shift();
+                }
+            }
+
+            lines_group.addTo(map);
+            cities_group.addTo(map);
+            
+        })
 }
 
 fetch("http://localhost:3000/names")
@@ -89,12 +165,34 @@ fetch("http://localhost:3000/names")
 
 formAthlete.addEventListener("submit", function(e) {
     e.preventDefault();
-    displayAthletes(this.character.value);
+    console.log(this.character.value);
+    fetch(`search/?search=${this.character.value}`)
+    .then(res => res.json())
+    .then(res2 =>{
+        athletes =[] 
+        for (let ath of res2){
+            athletes.push(ath)
+        }
+    displayAthletes()});
 })
 
-$("#chooseAnAthlete").change(function () {
-    reqAthlete = this.athlete.id;
+$("#chooseAnAthlete").change(function (e) {
+    reqAthlete = e.target.id;
     updateTitles(this.athlete.value);
-    //updateMap();
-    //updateDescription();
+
+    fetch("http://localhost:3000/experience/" + reqAthlete)
+    .then(rep => rep.json())
+    .then(res => { 
+        updateDescription(res);
+        updateMap(res);
+    })
 })
+
+//Affichage du fond de carte carte
+L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-background/{z}/{x}/{y}{r}.{ext}', {
+    subdomains: 'abcd',
+    minZoom: 2,
+    maxZoom: 20,
+    ext: 'png',
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);

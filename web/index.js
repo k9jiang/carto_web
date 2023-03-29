@@ -73,7 +73,7 @@ app.get("/names", (req, res) => {
     if (err) {
       return console.error(err.message);
     }
-    console.log(result2.rows);
+    //console.log(result2.rows);
     res.json(result2.rows);
   })
 })
@@ -167,7 +167,7 @@ app.get("/athletes", (req, res) => {
   GROUP BY athlete.name${groupby_clause} 
   ORDER BY medalcount DESC`;
 
-  console.log(sql_query);
+  //console.log(sql_query);
   pool.query(sql_query,[], (err, result) => {
     if (err) {
       return console.error(err.message);
@@ -179,17 +179,32 @@ app.get("/athletes", (req, res) => {
 app.get("/experience/:name", (req, res) => {
   let name = req.params.name;
   name = checks_replaces_if_apostrophe(name);
-  const sql = `SELECT athlete.name, count(medal.medal) as medalcount, country.name, olympiad.year 
+  const sql = `SELECT athlete.name, olympic_cities.id as city_id, olympiad.year, athlete.gender, medal.medal, count(medal.medal) as medalcount, country.name  
   FROM athlete JOIN medal ON athlete.id = medal.athlete_id
   JOIN country on athlete.country_id = country.id
   JOIN olympiad on medal.olympiad_id = olympiad.id
+  JOIN olympic_cities on olympiad.city_id = olympic_cities.id
   WHERE athlete.name ilike '${name}'
-  GROUP BY athlete.name, country.name, olympiad.year`;
+  GROUP BY athlete.name, country.name, athlete.gender, medal.medal, olympiad.year, olympic_cities.id
+  ORDER BY olympiad.year`;
   pool.query(sql, [], (err, result) => {
      if (err) {
       return console.error(err.message);
     }
-    console.log(result.rows);
     res.json(result.rows);
   });
 });
+
+app.get("/search", (req,res) => {
+  let param = req.query.search;
+  console.log(param);
+  param = checks_replaces_if_apostrophe(param);
+  console.log(param);
+  const sql = `SELECT DISTINCT name FROM athlete WHERE name ilike '%${param}%'`;
+  pool.query(sql, [], (err, result) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    res.json(result.rows);
+  })
+})
