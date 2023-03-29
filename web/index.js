@@ -197,9 +197,7 @@ app.get("/experience/:name", (req, res) => {
 
 app.get("/search", (req,res) => {
   let param = req.query.search;
-  console.log(param);
   param = checks_replaces_if_apostrophe(param);
-  console.log(param);
   const sql = `SELECT DISTINCT name FROM athlete WHERE name ilike '%${param}%'`;
   pool.query(sql, [], (err, result) => {
     if (err) {
