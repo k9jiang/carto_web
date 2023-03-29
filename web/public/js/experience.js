@@ -24,6 +24,7 @@ let geom_style = {
 
 let cities_group = L.featureGroup();
 let lines_group = L.featureGroup();
+let popups_group = L.featureGroup();
 
 
 function displayAthletes(text = "") {
@@ -76,7 +77,6 @@ function reName(str){
 function updateDescription(result){
 
     if(result.length >= 1){
-        console.log("ok");
         $("#description").css("opacity", 1);
 
         first_res = result[0];
@@ -119,6 +119,7 @@ function updateMap(result){
         .then(res => { 
             cities_group.clearLayers();
             lines_group.clearLayers();
+            popups_group.clearLayers();
 
             let latlngs = [];
             let latlng = [];
@@ -130,7 +131,11 @@ function updateMap(result){
                     if (elmt.city_id == city.id.replace("olympic_cities.", "")) {
                         let coords = city.geometry.coordinates;
                         latlngs.push([coords[1], coords[0]]);
-                        L.marker([coords[1], coords[0]], {year: elmt.year}).addTo(cities_group);
+
+                        L.marker([coords[1], coords[0]])
+                            .bindTooltip(city.properties.city + " en " + elmt.year)   
+                            .addTo(cities_group);
+                        
                     }
                 }
             }
@@ -144,9 +149,22 @@ function updateMap(result){
                 }
             }
 
+            popups_group.addTo(map);
             lines_group.addTo(map);
             cities_group.addTo(map);
             
+        })
+}
+
+function fetchAthlete(id, name){
+    reqAthlete = id;
+    updateTitles(name);
+
+    fetch("http://localhost:3000/experience/" + reqAthlete)
+        .then(rep => rep.json())
+        .then(res => { 
+            updateDescription(res);
+            updateMap(res);
         })
 }
 
@@ -166,13 +184,7 @@ if(reqAthlete == null){
     
     })
 }else{
-    fetch("http://localhost:3000/experience/" + reqAthlete)
-            .then(rep => rep.json())
-            .then(res => { 
-                console.log(res);
-                updateDescription(res);
-                updateMap(res);
-            })
+    fetchAthlete(reqAthlete, reName(reqAthlete));
 }
 
 formAthlete.addEventListener("submit", function(e) {
@@ -191,16 +203,7 @@ formAthlete.addEventListener("submit", function(e) {
 
 $("#chooseAnAthlete").change(function (e) {
     if(e.target.id != "search-athlete"){
-        reqAthlete = e.target.id;
-        updateTitles(this.athlete.value);
-    
-        fetch("http://localhost:3000/experience/" + reqAthlete)
-            .then(rep => rep.json())
-            .then(res => { 
-                console.log(res);
-                updateDescription(res);
-                updateMap(res);
-            })
+        fetchAthlete(e.target.id, this.athlete.value);
     }
 })
 
