@@ -1,3 +1,5 @@
+//import 'leaflet-arrowheads';
+
 let athletes = [];
 let scrollAthlete = document.getElementById("scroll");
 let formAthlete = document.getElementById("chooseAnAthlete");
@@ -111,7 +113,7 @@ function sortAsc(a, b) {
 
 function updateMap(result){
 
-    let url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Carthageo%3Aolympic_cities&outputFormat=application%2Fjson";
+    let url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Aolympic_cities&outputFormat=application%2Fjson";
 
     fetch(url)
         .then(rep => rep.json())
@@ -138,7 +140,7 @@ function updateMap(result){
 
                 latlng.push(coord);
                 if(latlng.length >= 2){
-                    L.polyline(latlng, {color: 'red'}).addTo(lines_group);
+                    L.polyline(latlng, {color: 'red'}).arrowheads().addTo(lines_group);
                     latlng.shift();
                 }
             }
