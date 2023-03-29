@@ -113,7 +113,15 @@ fetch("http://localhost:3000/names")
 
 formAthlete.addEventListener("submit", function(e) {
     e.preventDefault();
-    displayAthletes(this.character.value);
+    console.log(this.character.value);
+    fetch(`search/?search=${this.character.value}`)
+    .then(res => res.json())
+    .then(res2 =>{
+        athletes =[] 
+        for (let ath of res2){
+            athletes.push(ath)
+        }
+    displayAthletes()});
 })
 
 $("#chooseAnAthlete").change(function (e) {
