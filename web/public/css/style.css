@@ -136,9 +136,7 @@ fieldset{
     overflow: hidden;
 }
 
-.part-one form label{
-    font-weight: lighter;
-}
+
 
 .part-one form label:hover{
     text-decoration: underline;
@@ -154,12 +152,16 @@ fieldset{
     text-decoration: underline;
 }
 
-.part-one form label{
-    cursor: pointer;
+.part-one form label, .part-one form p{
     display: inline-block;
     width: 100%;
     padding: 10px;
     padding-right: 0px;
+    font-weight: lighter;
+}
+
+.part-one form label{
+    cursor: pointer;
 }
 
 #chooseAYear{
@@ -256,6 +258,7 @@ fieldset{
     border-radius: 15px;
     box-shadow: 2px 2px 4px black;
     width: 200px;
+    opacity: 0;
 }
 
 #description p{

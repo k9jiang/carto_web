@@ -1,13 +1,13 @@
 let athletes = [];
 let scrollAthlete = document.getElementById("scroll");
 let formAthlete = document.getElementById("chooseAnAthlete");
-let reqAthlete = "";
+let reqAthlete = null;
 
 let map = L.map('map-view').setView([20, 20], 2);
 
 //Paramètre de l'url
 const currentUrl = new URL(window.location.href);
-//currentUrl.searchParams.get("name")
+reqAthlete = currentUrl.searchParams.get("athlete")
 
 /*Titres */
 let mapTitle = document.querySelector(".part-two h2")
@@ -27,6 +27,10 @@ let lines_group = L.featureGroup();
 function displayAthletes(text = "") {
 
     scrollAthlete.innerHTML = "";
+
+    if(athletes.length <= 0){
+        scrollAthlete.innerHTML = "<p>Pas d'athlètes</p>";
+    }
 
     if (text === "") {
         for (let athlete of athletes) {
@@ -76,38 +80,41 @@ function reName(str){
 }
 
 function updateDescription(result){
-    first_res = result[0];
-    gold_medals = 0;
-    silver_medals = 0;
-    bronze_medals = 0;
 
-    if(first_res.gender == "Women"){
-        $("#genre span").text("♀ Femme");
-    }else{
-        $("#genre span").text("♂ Homme");
-    }
+    if(result.length >= 1){
+        console.log("ok");
+        $("#description").css("opacity", 1);
 
-    $("#country span").text(first_res.name);
-    $("#discipline span").text(first_res.discipline);
-    
-    for (let res of result){
-        if(res.medal == "Gold"){
-            gold_medals += parseInt(res.medalcount)
-        }else if(res.medal == "Silver"){
-            silver_medals += parseInt(res.medalcount)
+        first_res = result[0];
+        gold_medals = 0;
+        silver_medals = 0;
+        bronze_medals = 0;
+
+        if(first_res.gender == "Women"){
+            $("#genre span").text("♀ Femme");
         }else{
-            bronze_medals += parseInt(res.medalcount) 
+            $("#genre span").text("♂ Homme");
         }
-    }
-    $("#medals_gain div.gold span").text(gold_medals);
-    $("#medals_gain div.silver span").text(silver_medals);
-    $("#medals_gain div.bronze span").text(bronze_medals);
-    $("#medals_gain p span").text(bronze_medals + silver_medals + gold_medals);
-}
 
-function sortAsc(a, b) {
-    return a.position > b.position;
-  }
+        $("#country span").text(first_res.name);
+        $("#discipline span").text(first_res.discipline);
+        
+        for (let res of result){
+            if(res.medal == "Gold"){
+                gold_medals += parseInt(res.medalcount)
+            }else if(res.medal == "Silver"){
+                silver_medals += parseInt(res.medalcount)
+            }else{
+                bronze_medals += parseInt(res.medalcount) 
+            }
+        }
+        $("#medals_gain div.gold span").text(gold_medals);
+        $("#medals_gain div.silver span").text(silver_medals);
+        $("#medals_gain div.bronze span").text(bronze_medals);
+        $("#medals_gain p span").text(bronze_medals + silver_medals + gold_medals);
+    }
+    
+}
 
 function updateMap(result){
 
@@ -149,43 +156,58 @@ function updateMap(result){
         })
 }
 
-fetch("http://localhost:3000/names")
-    .then(rep => rep.json())
-    .then(res => { 
-        for (let i in res) {
-            athletes.push(res[i]);
 
-            if(i >= 50){
-                break;
+if(reqAthlete == null){
+    fetch("http://localhost:3000/names")
+        .then(rep => rep.json())
+        .then(res => { 
+            for (let i in res) {
+                athletes.push(res[i]);
+    
+                if(i >= 50){
+                    break;
+                }
             }
-        }
-        displayAthletes();
-
-})
+            displayAthletes();
+    
+    })
+}else{
+    fetch("http://localhost:3000/experience/" + reqAthlete)
+            .then(rep => rep.json())
+            .then(res => { 
+                console.log(res);
+                updateDescription(res);
+                updateMap(res);
+            })
+}
 
 formAthlete.addEventListener("submit", function(e) {
     e.preventDefault();
-    console.log(this.character.value);
-    fetch(`search/?search=${this.character.value}`)
-    .then(res => res.json())
-    .then(res2 =>{
-        athletes =[] 
-        for (let ath of res2){
-            athletes.push(ath)
-        }
-    displayAthletes()});
+    if(this.character.value.length >= 4){
+        fetch(`search/?search=${this.character.value}`)
+            .then(res => res.json())
+            .then(res2 =>{
+                athletes =[] 
+                for (let ath of res2){
+                    athletes.push(ath);
+                }
+            displayAthletes()});
+    }
 })
 
 $("#chooseAnAthlete").change(function (e) {
-    reqAthlete = e.target.id;
-    updateTitles(this.athlete.value);
-
-    fetch("http://localhost:3000/experience/" + reqAthlete)
-    .then(rep => rep.json())
-    .then(res => { 
-        updateDescription(res);
-        updateMap(res);
-    })
+    if(e.target.id != "search-athlete"){
+        reqAthlete = e.target.id;
+        updateTitles(this.athlete.value);
+    
+        fetch("http://localhost:3000/experience/" + reqAthlete)
+            .then(rep => rep.json())
+            .then(res => { 
+                console.log(res);
+                updateDescription(res);
+                updateMap(res);
+            })
+    }
 })
 
 //Affichage du fond de carte carte
