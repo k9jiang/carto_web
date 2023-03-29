@@ -73,7 +73,7 @@ app.get("/names", (req, res) => {
     if (err) {
       return console.error(err.message);
     }
-    console.log(result2.rows);
+    //console.log(result2.rows);
     res.json(result2.rows);
   })
 })
@@ -167,7 +167,7 @@ app.get("/athletes", (req, res) => {
   GROUP BY athlete.name${groupby_clause} 
   ORDER BY medalcount DESC`;
 
-  console.log(sql_query);
+  //console.log(sql_query);
   pool.query(sql_query,[], (err, result) => {
     if (err) {
       return console.error(err.message);
@@ -189,7 +189,21 @@ app.get("/experience/:name", (req, res) => {
      if (err) {
       return console.error(err.message);
     }
-    console.log(result.rows);
+    //console.log(result.rows);
     res.json(result.rows);
   });
 });
+
+app.get("/search", (req,res) => {
+  let param = req.query.search;
+  console.log(param);
+  param = checks_replaces_if_apostrophe(param);
+  console.log(param);
+  const sql = `SELECT DISTINCT name FROM athlete WHERE name ilike '%${param}%'`;
+  pool.query(sql, [], (err, result) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    res.json(result.rows);
+  })
+})
