@@ -1,5 +1,3 @@
-//import 'leaflet-arrowheads';
-
 let athletes = [];
 let scrollAthlete = document.getElementById("scroll");
 let formAthlete = document.getElementById("chooseAnAthlete");
@@ -65,14 +63,6 @@ function updateTitles(title){
     descriptionTitle.textContent = title;
 }
 
-function checks_replaces_if_apostrophe(str){
-    let str_replaced = str
-    if (str.includes("'")) {
-      str_replaced = str.replace("'", "''");
-    }
-    return str_replaced
-}
-
 function reName(str){
     let str_split = str.split(', ');
     let first_str = str_split[0].toLowerCase();
@@ -120,7 +110,7 @@ function updateDescription(result){
 
 function updateMap(result){
 
-    let url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Aolympic_cities&outputFormat=application%2Fjson";
+    let url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Aolympic_cities&outputFormat=application%2Fjson";
 
     fetch(url)
         .then(rep => rep.json())
