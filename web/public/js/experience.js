@@ -64,14 +64,6 @@ function updateTitles(title){
     descriptionTitle.textContent = title;
 }
 
-function checks_replaces_if_apostrophe(str){
-    let str_replaced = str
-    if (str.includes("'")) {
-      str_replaced = str.replace("'", "''");
-    }
-    return str_replaced
-}
-
 function reName(str){
     let str_split = str.split(', ');
     let first_str = str_split[0].toLowerCase();
@@ -147,7 +139,7 @@ function updateMap(result){
 
                 latlng.push(coord);
                 if(latlng.length >= 2){
-                    L.polyline(latlng, {color: 'red'}).arrowheads().addTo(lines_group);
+                    L.polyline(latlng, {color: 'red'}).arrowheads({yawn:40, size:"8%", fill:'true', color:'black', fillColor:'red', fillOpacity:'50%'}).addTo(lines_group);
                     latlng.shift();
                 }
             }
