@@ -13,10 +13,18 @@ const currentUrl = new URL(window.location.href);
 let mapTitle = document.querySelector(".part-two h2")
 let descriptionTitle = document.querySelector(".part-three h2")
 
+let geom_style = {
+    weight: 1,
+    fillColor: "#a59af5",
+    fillOpacity: 1,
+    color: "#000"
+}
+
+let cities_group = L.featureGroup();
+let lines_group = L.featureGroup();
+
 
 function displayAthletes(text = "") {
-
-    console.log(text);
 
     scrollAthlete.innerHTML = "";
 
@@ -97,6 +105,50 @@ function updateDescription(result){
     $("#medals_gain p span").text(bronze_medals + silver_medals + gold_medals);
 }
 
+function sortAsc(a, b) {
+    return a.position > b.position;
+  }
+
+function updateMap(result){
+
+    let url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=Carthageo%3Aolympic_cities&outputFormat=application%2Fjson";
+
+    fetch(url)
+        .then(rep => rep.json())
+        .then(res => { 
+            cities_group.clearLayers();
+            lines_group.clearLayers();
+
+            let latlngs = [];
+            let latlng = [];
+
+            let features = res.features;
+
+            for (elmt of result) {
+                for (city of features) {
+                    if (elmt.city_id == city.id.replace("olympic_cities.", "")) {
+                        let coords = city.geometry.coordinates;
+                        latlngs.push([coords[1], coords[0]]);
+                        L.marker([coords[1], coords[0]], {year: elmt.year}).addTo(cities_group);
+                    }
+                }
+            }
+
+            for(let coord of latlngs){
+
+                latlng.push(coord);
+                if(latlng.length >= 2){
+                    L.polyline(latlng, {color: 'red'}).addTo(lines_group);
+                    latlng.shift();
+                }
+            }
+
+            lines_group.addTo(map);
+            cities_group.addTo(map);
+            
+        })
+}
+
 fetch("http://localhost:3000/names")
     .then(rep => rep.json())
     .then(res => { 
@@ -123,11 +175,9 @@ $("#chooseAnAthlete").change(function (e) {
     fetch("http://localhost:3000/experience/" + reqAthlete)
     .then(rep => rep.json())
     .then(res => { 
-        console.log(res);
         updateDescription(res);
+        updateMap(res);
     })
-    
-    //updateMap();
 })
 
 //Affichage du fond de carte carte
