@@ -105,8 +105,23 @@ fieldset{
     margin: auto;
 }
 
+#submit input{
+    border-radius: 2px;
+    height: 19px;
+}
+
+#search-athlete{
+    border: 1px solid black;
+}
+
 #submit input[type="submit"]{
+    cursor: pointer;
     width: 40px;
+    border: none;
+    background: url(../img/magnifying-glass-solid.svg) no-repeat center, black;
+    background-size: 40%;
+    vertical-align: middle;
+    height: 21px;
 }
 
 #scroll{
