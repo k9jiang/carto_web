@@ -43,6 +43,7 @@ app.listen(3000, () => {
     console.log("Serveur démarré (http://localhost:3000/) !");
 });
 
+//Envoie d'une liste de toutes les disciplines
 app.get("/disciplines", (req, res) => {
   const query_discipline = "SELECT DISTINCT discipline from event";
   pool.query(query_discipline, [], (err, result) => {
@@ -53,6 +54,7 @@ app.get("/disciplines", (req, res) => {
   })
 })
 
+//Ouverture de la page discipline avec l'envoie de la liste des années
 app.get("/discipline", (req, res) => {
   const query_year = "SELECT DISTINCT year from olympiad ORDER BY year ASC";
   pool.query(query_year, [], (err, result2) => {
@@ -63,34 +65,38 @@ app.get("/discipline", (req, res) => {
   })
 })
 
+//Page du parcours des athlètes
 app.get("/experience", (req, res) => {
     res.render("experience");
 })
 
+//Page de l'à propos
 app.get("/about", (req, res) => {
     res.render("about");
 })
 
+//Page d'accueil
 app.get("/", (req, res) => {
     res.render("index");
 })
 
+//Envoie de tous les athlètes
 app.get("/names", (req, res) => {
   const query_names = "SELECT DISTINCT name from athlete ORDER BY name ASC";
   pool.query(query_names, [], (err, result2) => {
     if (err) {
       return console.error(err.message);
     }
-    //console.log(result2.rows);
     res.json(result2.rows);
   })
 })
 
+//Envoie des données des pays
 app.post("/data", (req, res) => {
-  //console.log(req.body);
   let query_parameters;
   let query_medals;
 
+  //La requête varie selon les paramètres en entrées
   if (req.body.discipline == 'disciplines' && req.body.year == 'allYears') {
     query_medals = "SELECT country.name, count(medal.medal) AS medalcount FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id GROUP BY country.name ORDER BY medalcount desc";
   }
@@ -106,20 +112,20 @@ app.post("/data", (req, res) => {
     query_parameters = [req.body.discipline, req.body.year];
     query_medals = "SELECT country.name, count(medal.medal) AS medalcount, olympiad.year, event.discipline FROM athlete JOIN medal ON athlete.id = medal.athlete_id JOIN event ON medal.event_id = event.id JOIN country ON athlete.country_id = country.id JOIN olympiad ON medal.olympiad_id = olympiad.id  WHERE event.discipline = $1 AND olympiad.year = $2 GROUP BY country.name, olympiad.year, event.discipline ORDER BY medalcount desc";
   }
-  //console.log(query_medals);
+
+  //Envoie de la requête SQL
   pool.query(query_medals, query_parameters, (err, result) => {
     if (err) {
       return console.error(err.message);
     }
     medals_by_country = result.rows;
-    //console.log(medals_by_country);
+    
     res.json(medals_by_country);
   })
 })
 
-
-app.get("/athletes", (req, res) => {
-  console.log(req.query.country, req.query.discipline, req.query.year); //we use req.query instead of req.parameters because the route is not explicit
+//Envoie des données des athlètes selon les paramètres sélectionnées
+app.get("/athletes", (req, res) => { 
   let query_parameters = [req.query.country, req.query.discipline, req.query.year];
   let default_parameters = ['allCountries', 'disciplines', 'allYears'];
   let is_default_query = [];
@@ -130,7 +136,7 @@ app.get("/athletes", (req, res) => {
     else {
       is_default_query.push(true);
     }}
-  console.log(is_default_query);
+    
   let select_clause = "";
   let where_clause = "";
   let join_clause = "";
@@ -175,7 +181,6 @@ app.get("/athletes", (req, res) => {
   GROUP BY athlete.name${groupby_clause} 
   ORDER BY medalcount DESC`;
 
-  //console.log(sql_query);
   pool.query(sql_query,[], (err, result) => {
     if (err) {
       return console.error(err.message);
@@ -184,9 +189,10 @@ app.get("/athletes", (req, res) => {
   })
 })
 
+//Envoie les information d'un athlètes
 app.get("/experience/:name", (req, res) => {
   let name = req.params.name;
-  name = checks_replaces_if_apostrophe(name);
+  name = checks_replaces_if_apostrophe(name); //Remplacement des apostrophes pour la compatibilité
   const sql = `SELECT athlete.name, olympic_cities.id as city_id, olympiad.year, athlete.gender, medal.medal, count(medal.medal) as medalcount, country.name  
   FROM athlete JOIN medal ON athlete.id = medal.athlete_id
   JOIN country on athlete.country_id = country.id
@@ -203,6 +209,7 @@ app.get("/experience/:name", (req, res) => {
   });
 });
 
+//Envoie des noms d'athlètes possédant le caractère du paramètre de la recherche
 app.get("/search", (req,res) => {
   let param = req.query.search;
   param = checks_replaces_if_apostrophe(param);
