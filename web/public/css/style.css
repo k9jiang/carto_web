@@ -56,7 +56,7 @@ header div{
 }
 
 header img{
-    width: 125px;
+    height: 84px;
 }
 
 header nav, footer{
@@ -441,6 +441,7 @@ fieldset{
     .part-three{
         display: flex;
         justify-content: center;
+        width: auto;
     }
 
     .statistics, .graph{

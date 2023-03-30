@@ -1,23 +1,29 @@
-const selectYear = document.getElementById("listOfYear");
-const spanTitleMap = document.querySelector(".map h2 span");
+/* Variables */
 
-const inputEnterDiscipline = document.getElementById("search-discipline");
-const formDiscipline = document.querySelector("#chooseADiscipline fieldset");
+const select_year = document.getElementById("listOfYear");
 
-const firstDiscipline = document.querySelector("input[name='discipline']");
-const firstYear = document.querySelector("option[value='2014']");
+//Partie choix des années
+const span_title_map = document.querySelector(".map h2 span");
 
+//Partie choix des disciplines
 let disciplines = [];
+const fieldset_disciplines = document.querySelector("#chooseADiscipline fieldset");
 
+//Valeurs par défaut
+const first_discipline = document.querySelector("input[name='discipline']");
+const first_year = document.querySelector("option[value='2014']");
+
+//Requêtes de départ
 let reqDiscipline = "disciplines";
 let reqYear = "allYears";
 let reqCountry = "allCountries";
 
-let group;
-let circles_group = L.featureGroup(); //initializing circles group
+//Groupes leaflet
+let countries_group;
+let circles_group = L.featureGroup(); //initializing circles countries_group
 let legend = undefined;
 
-let filter;
+//Carte leaflet
 let map = L.map('map-view').setView([20, 20], 2);
 
 //Graphiques
@@ -59,15 +65,15 @@ function breaking_gap(array){
 
 function updateTitleMap(){
     if(reqYear == "allYears"){
-        spanTitleMap.textContent = "de 1886 à 2014";
+        span_title_map.textContent = "de 1886 à 2014";
     } else {
-        spanTitleMap.textContent = ` en ${reqYear}`;
+        span_title_map.textContent = ` en ${reqYear}`;
     }
 
     if (reqDiscipline == "disciplines") {
-        spanTitleMap.textContent += " dans toutes les disciplines"
+        span_title_map.textContent += " dans toutes les disciplines"
     } else {
-        spanTitleMap.textContent += ` en ${reqDiscipline}`
+        span_title_map.textContent += ` en ${reqDiscipline}`
     }
 }
 
@@ -143,7 +149,7 @@ function updateMedals(json_query){
                     let circle_prop;
                     circle_prop = L.circleMarker(latlng, {radius : getRadius(medals), color : '#22be85', fillColor : '#61ffb3', fillOpacity : 0.5, weight: 1.5, country: country.name})
                         .bindTooltip(`${country.name} : ${medals} médaille(s)`)
-                        .addTo(circles_group)//adding each circle of each country to the group
+                        .addTo(circles_group)//adding each circle of each country to the countries_group
                 }
             }
         }
@@ -152,7 +158,7 @@ function updateMedals(json_query){
                 L.DomEvent.stopPropagation(e);
                 updateCountry(e.layer.options.country); 
             })
-            .addTo(map); //displaying features group in the map        
+            .addTo(map); //displaying features countries_group in the map        
     })
 }
 
@@ -169,6 +175,8 @@ function updateCountry(countryName = "allCountries") {
 }
 
 function updateGeom(replace = false) {
+    let filter;
+
     if (reqYear == 'allYears') {
         filter = "";
     } else {
@@ -181,9 +189,9 @@ function updateGeom(replace = false) {
         .then(result => result.json())
         .then(result => {
             if (replace) {
-                group.clearLayers();
+                countries_group.clearLayers();
             }
-            group = L.geoJSON(result, {
+            countries_group = L.geoJSON(result, {
                 style : () => {
                     return geom_style;
                 }
@@ -384,10 +392,10 @@ function updateCountryData() {
 
 function displayDisciplines(text = "") {
 
-    formDiscipline.innerHTML = "";
+    fieldset_disciplines.innerHTML = "";
 
     if (text === "") {
-        firstDiscipline.setAttribute("checked", true)
+        first_discipline.setAttribute("checked", true)
 
         for (let discipline of disciplines) {
             let inputDiscipline = `<div>
@@ -395,7 +403,7 @@ function displayDisciplines(text = "") {
             <label for="${discipline}">${discipline}</label>
             </div>`;
 
-            formDiscipline.innerHTML += inputDiscipline;
+            fieldset_disciplines.innerHTML += inputDiscipline;
         }
     } else {
         for (let discipline of disciplines) {
@@ -405,15 +413,15 @@ function displayDisciplines(text = "") {
                 <label for="${discipline}">${discipline}</label>
             </div>`;
 
-                formDiscipline.innerHTML += inputDiscipline;
+                fieldset_disciplines.innerHTML += inputDiscipline;
             }
         }
     }
 }
 
 //Valeurs sélectionnées de départ
-firstDiscipline.setAttribute("checked", true)
-firstYear.setAttribute("selected", true)
+first_discipline.setAttribute("checked", true)
+first_year.setAttribute("selected", true)
 
 //Mise à jour de la carte
 updateTitleMap();
@@ -445,11 +453,11 @@ $("#chooseADiscipline").change(function () {
 
 //Interaction avec les années
 $("#chooseAYear").change(function () {
-    selectYear.setAttribute("disabled", true);
+    select_year.setAttribute("disabled", true);
 
     //Si une année est sélectionnée
     if (this.year.value == 'year') {
-        selectYear.removeAttribute("disabled");
+        select_year.removeAttribute("disabled");
         reqYear = this.listOfYear.value;
     } else {
         reqYear = this.year.value;
