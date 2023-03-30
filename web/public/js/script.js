@@ -142,6 +142,7 @@ function updateMedals(json_query){
                     medals = country.medalcount
                     let circle_prop;
                     circle_prop = L.circleMarker(latlng, {radius : getRadius(medals), color : '#22be85', fillColor : '#61ffb3', fillOpacity : 0.5, weight: 1.5, country: country.name})
+                        .bindTooltip(`${country.name} : ${medals} médaille(s)`)
                         .addTo(circles_group)//adding each circle of each country to the group
                 }
             }

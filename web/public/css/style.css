@@ -99,6 +99,31 @@ fieldset{
     border: none;
 }
 
+#submit{
+    width: 220px;
+    padding: 10px;
+    margin: auto;
+}
+
+#submit input{
+    border-radius: 2px;
+    height: 19px;
+}
+
+#search-athlete{
+    border: 1px solid black;
+}
+
+#submit input[type="submit"]{
+    cursor: pointer;
+    width: 40px;
+    border: none;
+    background: url(../img/magnifying-glass-solid.svg) no-repeat center, black;
+    background-size: 40%;
+    vertical-align: middle;
+    height: 21px;
+}
+
 #scroll{
     height: 400px;
     margin: 0px;
@@ -135,8 +160,6 @@ fieldset{
 .part-one form div{
     overflow: hidden;
 }
-
-
 
 .part-one form label:hover{
     text-decoration: underline;
@@ -208,8 +231,6 @@ fieldset{
     width: 90px;
 }
 
-/*Map*/
-
 /*Statistiques*/
 .part-three{
     width: 345px;
@@ -259,6 +280,7 @@ fieldset{
     border-radius: 15px;
     box-shadow: 2px 2px 4px black;
     width: 200px;
+    margin: 100px auto;
     opacity: 0;
 }
 
@@ -301,21 +323,6 @@ fieldset{
     color: brown;
 }
 
-@media (max-width: 1515px) {
-    .container{
-        flex-wrap: wrap;
-    }
-
-    .part-three{
-        display: flex;
-        justify-content: center;
-    }
-
-    .statistics, .graph{
-        width: 400px;
-    }
-}
-
 /*légende*/
 .legend {
     padding: 6px 8px;
@@ -347,6 +354,25 @@ fieldset{
 
 .legend .text_prop{
     fill: black;
+}
+
+@media (max-width: 1515px) {
+    .container{
+        flex-wrap: wrap;
+    }
+
+    .part-three{
+        display: flex;
+        justify-content: center;
+    }
+
+    .statistics, .graph{
+        width: 400px;
+    }
+
+    #description{
+        margin: 10px auto;
+    }
 }
 
 
@@ -395,9 +421,7 @@ fieldset{
     #scroll label{
         padding-right: 10px;
     }
-}
 
-@media (max-width: 1185px) {
     .part-three{
         flex-direction: column;
     }

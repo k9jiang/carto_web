@@ -66,6 +66,9 @@ app.get("/", (req, res) => {
 app.get("/experience", (req, res) => {
     res.render("experience");
 })
+app.get("/about", (req, res) => {
+    res.render("about");
+})
 
 app.get("/names", (req, res) => {
   const query_names = "SELECT DISTINCT name from athlete ORDER BY name ASC";
