@@ -1,5 +1,6 @@
 body{
     margin: auto;
+    min-height: 100vh;
 }
 
 /*Textes*/
@@ -150,11 +151,20 @@ header nav ul div{
     right: 0px;
 }
 
+#outils {
+    max-height: 217px;
+    max-width: 283px;
+    justify-self: center;
+}
+
 .presentation_page p, .image{
     width: 80%;
     margin: 15px auto;
 }
 
+.presentation_page p {
+    text-align: justify;
+}
 .presentation_page{
     width: 49%;
 }
@@ -435,9 +445,10 @@ fieldset{
 /*footer */
 
 footer{
-    position: fixed;
-    bottom:0;
-    width:100%;
+    position: sticky;
+    width: 100%;
+    top: 100%;
+    text-align: right;
 }
 
 @media (max-width: 1515px) {

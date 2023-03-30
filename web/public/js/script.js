@@ -134,7 +134,7 @@ function updateLegend(){
 }
 
 function updateMedals(json_query){
-    fetch('http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
+    fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
     .then(result => result.json())
     .then(function(centroids) {
         //console.log(centroids.features[0].geometry.coordinates);
@@ -182,7 +182,7 @@ function updateGeom(replace = false) {
     } else {
         filter = `&CQL_FILTER=first_participation<=${reqYear}%20AND%20last_participation>=${reqYear}`;
     }
-    const url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
+    const url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acountry&outputFormat=application%2Fjson"
               + filter;
     //Affichage des pays
     fetch(url)
