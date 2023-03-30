@@ -87,7 +87,6 @@ header nav ul div{
     margin: 0px 20px;
 }
 
-
 /*Container*/
 
 .part-one{
@@ -431,6 +430,14 @@ fieldset{
 
 .legend .text_prop{
     fill: black;
+}
+
+/*footer */
+
+footer{
+    position: fixed;
+    bottom:0;
+    width:100%;
 }
 
 @media (max-width: 1515px) {
