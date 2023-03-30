@@ -53,21 +53,26 @@ app.get("/disciplines", (req, res) => {
   })
 })
 
-app.get("/", (req, res) => {
+app.get("/discipline", (req, res) => {
   const query_year = "SELECT DISTINCT year from olympiad ORDER BY year ASC";
   pool.query(query_year, [], (err, result2) => {
     if (err) {
       return console.error(err.message);
     }
-    res.render("index", {years : result2.rows});
+    res.render("discipline", {years : result2.rows});
   })
 })
 
 app.get("/experience", (req, res) => {
     res.render("experience");
 })
+
 app.get("/about", (req, res) => {
     res.render("about");
+})
+
+app.get("/", (req, res) => {
+    res.render("index");
 })
 
 app.get("/names", (req, res) => {
