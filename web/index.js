@@ -193,13 +193,14 @@ app.get("/athletes", (req, res) => {
 app.get("/experience/:name", (req, res) => {
   let name = req.params.name;
   name = checks_replaces_if_apostrophe(name); //Remplacement des apostrophes pour la compatibilité
-  const sql = `SELECT athlete.name, olympic_cities.id as city_id, olympiad.year, athlete.gender, medal.medal, count(medal.medal) as medalcount, country.name  
+  const sql = `SELECT athlete.name, olympic_cities.id as city_id, olympiad.year, athlete.gender, medal.medal, count(medal.medal) as medalcount, country.name, event.discipline
   FROM athlete JOIN medal ON athlete.id = medal.athlete_id
   JOIN country on athlete.country_id = country.id
   JOIN olympiad on medal.olympiad_id = olympiad.id
   JOIN olympic_cities on olympiad.city_id = olympic_cities.id
+  JOIN event on medal.event_id = event.id
   WHERE athlete.name ilike '${name}'
-  GROUP BY athlete.name, country.name, athlete.gender, medal.medal, olympiad.year, olympic_cities.id
+  GROUP BY athlete.name, country.name, athlete.gender, medal.medal, olympiad.year, olympic_cities.id, discipline
   ORDER BY olympiad.year`;
   pool.query(sql, [], (err, result) => {
      if (err) {

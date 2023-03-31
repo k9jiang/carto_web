@@ -69,6 +69,15 @@ function updateDescription(result){//Mise à jour de l'encadré description
         $("#description").css("opacity", 1);//encadré visible
 
         first_res = result[0];
+        let countries = [];
+
+        for (res of result) {
+            let country = res.name;
+            countries.push(country);
+        }
+        countries = new Set(countries); //Set est un objet itérable comme les arrays qui prend les valeurs uniques d'un array.
+        countries = Array.from(countries).join(', '); //on doit retransformer countries en array afin d'y appliquer la méthode join pour avoir une chaîne de caractères
+
         gold_medals = 0;
         silver_medals = 0;
         bronze_medals = 0;
@@ -79,8 +88,10 @@ function updateDescription(result){//Mise à jour de l'encadré description
             $("#genre span").text("♂ Homme");
         }
 
-        $("#country span").text(first_res.name);//Pays
-        $("#discipline span").text(first_res.discipline);//Discipline
+        $("#country span").text(countries);//Pays
+        console.log(first_res);
+        console.log((first_res.discipline));
+        $("#disciplines_spec span").text(first_res.discipline);//Discipline
         
         for (let res of result){//Dénombrement des catégories de médailles...
             if(res.medal == "Gold"){
@@ -102,7 +113,7 @@ function updateDescription(result){//Mise à jour de l'encadré description
 
 function updateMap(result){
 
-    let url = "http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Aolympic_cities&outputFormat=application%2Fjson";
+    let url = "http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Aolympic_cities&outputFormat=application%2Fjson";
 
     fetch(url)//Demande des points de ville
         .then(rep => rep.json())
