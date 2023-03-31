@@ -137,6 +137,7 @@ function updateMap(result){
                     //Création d'une ligne avec une flèche
                     L.polyline(latlng, {color: 'red'}).arrowheads({yawn:40, size:"8%", fill:'true', fillColor:'red', fillOpacity:'1'}).addTo(lines_group);
                     latlng.shift();//retrait de la première coordonnée
+                }
             }
 
             popups_group.addTo(map);

@@ -109,6 +109,10 @@ header nav ul div{
     width: 60%;
 }
 
+.restrict_container, .about{
+    display: block;
+}
+
 .restrict_container .image{
     display: block;
     min-width: 240px;
@@ -152,9 +156,11 @@ header nav ul div{
 }
 
 #outils {
+    position: initial;
     max-height: 217px;
     max-width: 283px;
-    justify-self: center;
+    display: block;
+    margin: auto;
 }
 
 .presentation_page p, .image{
