@@ -6,7 +6,13 @@ __Pré-requis : Node.js, Geoserver, PostgreSQL avec l'extension PostGIS et votre
 1- Télécharger et dézipper le dépôt.  
   
 2- Sur le client Postgres : Créer (un serveur et) une base de données qu'on nommera "__olympics__".  
-Éxécuter les scripts sql/*olympics.schema.sql* sql/*olympics.data.sql*, sql/*create_olympic_cities.sql*, sql/*update_olympiad.sql*, sql/*views_queries.sql* __dans cet ordre__.  
+Éxécuter les scripts :
+-sql/*olympics.schema.sql*  
+-sql/*olympics.data.sql*  
+-sql/*create_olympic_cities.sql*  
+-sql/*update_olympiad.sql*  
+-sql/*views_queries.sql*  
+__dans cet ordre__.  
   
 3- Dans le geoserveur : créer un espace de travail "olympics" puis y ajouter un entrepôt (lui donner même nom), en se connectant à la base de données (étape 2).  
 Publier les couches "*olympic_cities*", "*country*", "*centroids*" de l'entrepôt.  
