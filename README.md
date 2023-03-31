@@ -1,1 +1,1 @@
-This repository gathers the code we wrote to make an university project of web mapping.
+Ce dépôt rassemble le code d'un projet universitaire de web mapping.
