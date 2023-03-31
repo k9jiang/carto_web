@@ -1,5 +1,5 @@
-##titre Ce dépôt rassemble le code d'un projet universitaire de web mapping.  
-####titre Si vous voulez reproduire et visualiser le site web en local :  
+##Ce dépôt rassemble le code d'un projet universitaire de web mapping.  
+####Si vous voulez reproduire et visualiser le site web en local :  
 
 __Pré-requis : Node.js, Geoserver, PostgreSQL avec l'extension PostGIS et votre client postgres préféré.__
 
@@ -11,8 +11,8 @@ __Pré-requis : Node.js, Geoserver, PostgreSQL avec l'extension PostGIS et votre
 3- Dans le geoserveur : créer un espace de travail "olympics" puis y ajouter un entrepôt (lui donner même nom), en se connectant à la base de données (étape 2).  
 Publier les couches "*olympic_cities*", "*country*", "*centroids*" de l'entrepôt.  
 
-4- Ajouter un fichier texte nommé ".env" dans carto_web/web/ et y renseigner ses paramètres de connexion à la base de données postgres comme cela :
-DB_USER=*identifiant * 
+4- Ajouter un fichier texte nommé ".env" dans carto_web/web/ et y renseigner ses paramètres de connexion à la base de données postgres comme cela :  
+DB_USER=*identifiant*  
 DB_PASS="*mot_de_passe*" __(entre double quotes)__  
 DB_HOST=__localhost__  
 DB_DATABASE_NAME=__olympics__  
