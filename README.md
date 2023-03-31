@@ -1,5 +1,5 @@
-##Ce dépôt rassemble le code d'un projet universitaire de web mapping.  
-####Si vous voulez reproduire et visualiser le site web en local :  
+Ce dépôt rassemble le code d'un projet universitaire de web mapping.  
+Si vous voulez reproduire et visualiser le site web en local :  
 
 __Pré-requis : Node.js, Geoserver, PostgreSQL avec l'extension PostGIS et votre client postgres préféré.__
 
