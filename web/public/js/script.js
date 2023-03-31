@@ -142,7 +142,7 @@ function updateLegend(){
 }
 
 function updateMedals(json_query){
-    fetch('http://localhost:8080/geoserver/Carthageo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
+    fetch('http://localhost:8080/geoserver/olympics/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=olympics%3Acentroids&outputFormat=application%2Fjson')
     .then(result => result.json())//Requête des centroïdes
     .then(function(centroids) {
         circles_group.clearLayers()
