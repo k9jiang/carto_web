@@ -11,12 +11,12 @@ Pré-requis : Node.js, Geoserver, PostgreSQL avec l'extension PostGIS et votre c
 3- Dans le geoserveur : créer un espace de travail "olympics" puis y ajouter un entrepôt (lui donner même nom), en se connectant à la base de données (étape 2).
 Publier les couches "olympic_cities", "country", "centroids" de l'entrepôt.
 
-4- Ajouter un fichier texte nommé ".env" dans carto_web/web/ et y renseigner ses paramètres de connexion à la base de données postgres comme cela
-DB_USER=identifiant
-DB_PASS="mot_de_passe" (entre double quotes)
-DB_HOST=localhost
-DB_DATABASE_NAME=olympics
-DB_PORT=port (5432 par défaut)
+4- Ajouter un fichier texte nommé ".env" dans carto_web/web/ et y renseigner ses paramètres de connexion à la base de données postgres comme cela\n
+DB_USER=identifiant\n
+DB_PASS="mot_de_passe" (entre double quotes)\n
+DB_HOST=localhost\n
+DB_DATABASE_NAME=olympics\n
+DB_PORT=port (5432 par défaut)\n
 
 5- Lancer une invite de commande et se placer sur le dépôt, puis dans web
 Exécuter les commandes "npm install" et "npm start" dans cet ordre.
