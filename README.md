@@ -21,6 +21,6 @@ DB_PORT=*port* __(5432 par défaut)__
 5- Lancer une invite de commande et se placer sur le dépôt, puis dans web  
 Exécuter les commandes "__npm install__" et "__npm start__" __dans cet ordre__.  
 
-6- Allez sur [localhost:3000](localhost:3000)  
+6- Allez sur [localhost:3000](http://localhost:3000)  
   
 7- Contemplez notre site  
