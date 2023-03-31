@@ -1,3 +1,7 @@
+Lien vers les slides :
+
+[Google Slides](https://docs.google.com/presentation/d/1OOCZ_rd40Crd1to8Sjz8WWOxc-ZwYuJAZjADB8v5dsI/edit?usp=sharing)
+
 Ce dépôt rassemble le code d'un projet universitaire de web mapping.  
 Si vous voulez reproduire et visualiser le site web en local :  
 
