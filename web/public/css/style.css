@@ -109,7 +109,7 @@ header nav ul div{
     width: 60%;
 }
 
-.restrict_container, .about{
+.restrict_container.about{
     display: block;
 }
 
